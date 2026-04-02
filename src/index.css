@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+:root {
+  --bg-dark: #0a0a0f;
+  --bg-dark-2: #12121a;
+  --bg-light: #faf9f6;
+  --text-light: #e8e6e1;
+  --text-muted: #8a8694;
+  --text-dark: #1a1a2e;
+  --accent: #6c5ce7;
+  --accent-2: #a29bfe;
+  --companion-bg: rgba(108, 92, 231, 0.06);
+  --companion-border: rgba(108, 92, 231, 0.3);
+  --companion-text: #7c6ff0;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Space Grotesk', -apple-system, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--sans);
+  overflow-x: hidden;
+  background: var(--bg-dark);
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 2px;
+}
