@@ -1,230 +1,105 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { Bot } from 'lucide-react'
 
-const STORY_STEPS = [
-  {
-    id: 'meet',
-    lola: {
-      title: 'Meet Lola',
-      text: "It's 2030. Lola is a 28-year-old designer living in Paris. She has a companion AI that knows her routines, preferences, and goals — always working in the background to make her life easier.",
-      emoji: '👋',
-    },
-    companion: {
-      title: 'Background awareness',
-      text: "Knows Lola usually holidays around this time of year. Already scanning for signals — waiting for the right moment to start planning.",
-      icon: '🧠',
-    },
-  },
-  {
-    id: 'video',
-    lola: {
-      title: 'A spark of inspiration',
-      text: "Scrolling through her feed, Lola watches a surfing influencer's video from Lanzarote. Crystal-clear water, volcanic landscapes, perfect waves. Something clicks.",
-      emoji: '🏄‍♀️',
-    },
-    companion: {
-      title: 'Feed negotiation',
-      text: "Negotiated with the social feed's agent to surface content matching Lola's current context — travel-ready, adventure-seeking, budget available. The influencer video wasn't random.",
-      icon: '🤝',
-    },
-  },
-  {
-    id: 'message',
-    lola: {
-      title: 'She messages her best friend',
-      text: '"Hey, have you seen Lanzarote? We should go!" Lola sends the video to her best friend Marie. The excitement is mutual.',
-      emoji: '💬',
-    },
-    companion: {
-      title: 'Cross-surface tracking',
-      text: "Following Lola across surfaces — social feed, messaging app, browser. Feeding her context to other agents in the ecosystem, building a richer picture of intent.",
-      icon: '🔗',
-    },
-  },
-  {
-    id: 'agree',
-    lola: {
-      title: 'They agree on Lanzarote',
-      text: 'After a few excited voice messages, the decision is made. Lanzarote it is. Two weeks from now. Lola starts daydreaming about the trip.',
-      emoji: '✈️',
-    },
-    companion: {
-      title: 'Itinerary building begins',
-      text: "The moment they agree, starts building an itinerary. Stores destination + travel dates in memory. Sends intent signals to airline, hotel, and activity agents — triggering a bidding process.",
-      icon: '📋',
-    },
-  },
-  {
-    id: 'book',
-    lola: {
-      title: 'She books flights and hotels',
-      text: "Her companion surfaces three flight options and two hotels — all matching her budget, preferred airlines, and the dates she mentioned. She picks in under a minute.",
-      emoji: '🏨',
-    },
-    companion: {
-      title: 'Agentic ad formats at work',
-      text: "Gathered best options using agentic negotiable ad formats. Airlines and hotels bid based on Lola's context + rules. The companion decided what gets surfaced — balancing her preferences with the best available deals.",
-      icon: '💰',
-    },
-  },
-  {
-    id: 'payment',
-    lola: {
-      title: 'Booked!',
-      text: 'One tap. Flights and hotel confirmed. Lola gets a clean summary in her trip page — dates, confirmation numbers, packing suggestions.',
-      emoji: '✅',
-    },
-    companion: {
-      title: 'Payment & signal cascade',
-      text: "Handles payment through Lola's preferred method. Informs airline, hotel, and activity agents to anticipate her arrival. Other agents now know she's Lanzarote-bound.",
-      icon: '📡',
-    },
-  },
-  {
-    id: 'land',
-    lola: {
-      title: 'She lands and explores',
-      text: "Lola arrives in Lanzarote. Her trip page already has recommendations — a local surf school, a volcanic hike, a seafood spot near the hotel.",
-      emoji: '🌴',
-    },
-    companion: {
-      title: 'Local recommendations engine',
-      text: "Pushes activity recommendations sourced from the Lanzarote tourist office via partner agents. Handles reservations for the surf school. Each recommendation is contextual — not generic ads, but curated options.",
-      icon: '🗺️',
-    },
-  },
-  {
-    id: 'shop',
-    lola: {
-      title: 'Shopping for a surf suit',
-      text: "Before her first lesson, Lola needs a surf suit. She asks her companion. Three options appear — different brands, styles, price points. One from Decathlon catches her eye.",
-      emoji: '🛍️',
-    },
-    companion: {
-      title: 'Retail agent interaction',
-      text: "Interacts with retailers' agents, showing both organic and sponsored products. Retrieves a virtual asset of the surf suit (Virtual Asset ad format). Finds the best deal at Decathlon based on Lola's size, style, and budget.",
-      icon: '🏷️',
-    },
-  },
-  {
-    id: 'enjoy',
-    lola: {
-      title: 'She enjoys her trip',
-      text: "Surf lessons, local food, sunset hikes. Lola has the trip of a lifetime — and every recommendation felt natural, not forced. She never felt \"advertised to.\"",
-      emoji: '🌅',
-    },
-    companion: {
-      title: 'Continuous optimization',
-      text: "Continues following her trip, pushing the best options at every moment. Learning from each interaction to make the next suggestion even better. The advertising was invisible — but it was everywhere.",
-      icon: '♾️',
-    },
-  },
+const STEPS = [
+  { id: 'meet', lola: 'Lola is a 28-year-old designer in Paris. She has a companion AI that knows her routines, preferences, and goals.', companion: 'Knows she usually holidays around this time. Scanning for signals.' },
+  { id: 'video', lola: 'She watches a surfing influencer\'s video from Lanzarote on her feed. Crystal-clear water, volcanic landscape, perfect waves. Something clicks.', companion: 'Negotiated with the social feed\'s agent to push content matching her context — travel-ready, adventure-seeking, budget available. The video wasn\'t random.' },
+  { id: 'message', lola: '"Hey, have you seen Lanzarote? We should go!" She sends the video to her best friend Marie.', companion: 'Following her across surfaces — social, messaging, browser. Feeding context to other agents. Building a richer picture of intent.' },
+  { id: 'agree', lola: 'After a few voice messages, the decision is made. Lanzarote. Two weeks from now.', companion: 'Starts building an itinerary. Stores destination + dates. Sends intent signals to airline, hotel, and activity agents — triggering a bidding process.' },
+  { id: 'book', lola: 'Three flight options, two hotels — all matching her budget and dates. She picks in under a minute.', companion: 'Gathered options using agentic negotiable ad formats. Airlines and hotels bid based on her context + rules. The companion decides what gets surfaced.' },
+  { id: 'booked', lola: 'One tap. Flights and hotel confirmed. A clean summary appears on her trip page.', companion: 'Handles payment. Informs airline, hotel, and activity agents to anticipate her arrival. Other agents now know she\'s Lanzarote-bound.' },
+  { id: 'land', lola: 'She arrives. Her trip page already has recommendations — surf school, volcanic hike, seafood near the hotel.', companion: 'Pushes recommendations from the Lanzarote tourist office via partner agents. Handles reservations. Each option is contextual, not generic.' },
+  { id: 'shop', lola: 'She needs a surf suit. Three options appear — different brands, styles, prices. Decathlon catches her eye.', companion: 'Interacts with retailers\' agents. Shows organic and sponsored products. Retrieves a virtual asset of the suit. Finds the best deal.' },
+  { id: 'enjoy', lola: 'Surf lessons, local food, sunset hikes. The trip of a lifetime. Every recommendation felt natural.', companion: 'Continues optimizing. Learning from each interaction. The advertising was invisible — but it was everywhere.' },
 ]
 
-function StoryStep({ step, index }) {
+function Step({ step, index, total }) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-80px' })
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const isLast = index === total - 1
 
   return (
-    <div ref={ref} className="story-step" id={`step-${step.id}`}>
-      <div className="story-step__number">
-        <motion.span
+    <div ref={ref} className="tl-step">
+      <motion.div
+        className="tl-lola"
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.6 }}
+      >
+        <p className="tl-lola__text">{step.lola}</p>
+      </motion.div>
+
+      <div className="tl-rail">
+        <motion.div
+          className={`tl-rail__dot ${isLast ? 'tl-rail__dot--accent' : ''}`}
           initial={{ scale: 0 }}
-          animate={isInView ? { scale: 1 } : {}}
-          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-        >
-          {String(index + 1).padStart(2, '0')}
-        </motion.span>
-      </div>
-
-      <div className="story-step__content">
-        <motion.div
-          className="lola-card"
-          initial={{ opacity: 0, x: -30 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-        >
-          <div className="lola-card__emoji">{step.lola.emoji}</div>
-          <div className="lola-card__label">Lola</div>
-          <h3 className="lola-card__title">{step.lola.title}</h3>
-          <p className="lola-card__text">{step.lola.text}</p>
-        </motion.div>
-
-        <motion.div
-          className="companion-card"
-          initial={{ opacity: 0, x: 40 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        >
-          <div className="companion-card__icon">{step.companion.icon}</div>
-          <div className="companion-card__label">
-            <span className="companion-pulse" />
-            Companion Agent
-          </div>
-          <h4 className="companion-card__title">{step.companion.title}</h4>
-          <p className="companion-card__text">{step.companion.text}</p>
-        </motion.div>
-      </div>
-
-      {index < STORY_STEPS.length - 1 && (
-        <motion.div
-          className="story-step__connector"
-          initial={{ scaleY: 0 }}
-          animate={isInView ? { scaleY: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          animate={inView ? { scale: 1 } : {}}
+          transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.1 }}
         />
-      )}
+        {!isLast && <div className="tl-rail__line" />}
+      </div>
+
+      <motion.div
+        className="tl-companion"
+        initial={{ opacity: 0, x: 16 }}
+        animate={inView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.5, delay: 0.25 }}
+      >
+        <p className="tl-companion__text">{step.companion}</p>
+      </motion.div>
     </div>
   )
 }
 
 export default function LolaStory() {
   return (
-    <section className="lola-story" id="lola">
-      <div className="lola-story__header">
+    <section className="story">
+      <div className="story__header">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <span className="label label--light">Lola's Story — 2030</span>
-          <h2 className="lola-story__title">Two layers. One experience.</h2>
-          <p className="lola-story__subtitle">
-            Follow Lola's journey on the left. Watch what her AI companion does behind the scenes on the right.
-          </p>
-          <div className="lola-story__legend">
-            <div className="legend-item">
-              <div className="legend-dot legend-dot--lola" />
-              <span>What Lola sees</span>
+          <div className="story__header-cols">
+            <div className="story__header-left">
+              <h2 className="story__heading">Lola's Story</h2>
             </div>
-            <div className="legend-item">
-              <div className="legend-dot legend-dot--companion" />
-              <span>What her agent does</span>
+            <div className="story__header-right">
+              <p className="story__header-note">
+                On the left, what Lola experiences.<br />
+                On the right, what her companion agent does behind the scenes.
+              </p>
             </div>
           </div>
         </motion.div>
       </div>
 
-      <div className="lola-story__timeline">
-        {STORY_STEPS.map((step, i) => (
-          <StoryStep key={step.id} step={step} index={i} />
+      <div className="story__labels">
+        <span className="story__col-label">Lola</span>
+        <span />
+        <span className="story__col-label story__col-label--right"><Bot size={11} style={{ marginRight: '0.4em', verticalAlign: '-1px' }} />Companion Agent</span>
+      </div>
+
+      <div className="story__timeline">
+        {STEPS.map((step, i) => (
+          <Step key={step.id} step={step} index={i} total={STEPS.length} />
         ))}
       </div>
 
-      <div className="lola-story__footer">
+      <div className="story__close">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="lola-story__footer-title">
-            She never felt "advertised to."
+          <h2 className="story__close-title">
+            She never felt "advertised&nbsp;to."
           </h2>
-          <p className="lola-story__footer-text">
-            Every recommendation was contextual, timely, and useful. The advertising was invisible —
-            but it powered the entire experience. This is Ads 2.0.
+          <p className="story__close-body">
+            The advertising was invisible — but it powered the entire experience.
           </p>
         </motion.div>
       </div>

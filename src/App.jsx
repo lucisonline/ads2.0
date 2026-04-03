@@ -1,25 +1,26 @@
+import { ReactLenis } from 'lenis/react'
 import {
   TitleScreen,
-  TheThreat,
   TheSplit,
   ProtocolAgnostic,
   CriteoPosition,
   Transition,
 } from './components/StrategicSections'
-import LolaStory from './components/LolaStory'
+import ScrollRevealText from './components/ScrollRevealText'
+import LolaCarousel from './components/LolaCarousel'
 import './App.css'
 
 function App() {
   return (
-    <>
+    <ReactLenis root>
       <TitleScreen />
-      <TheThreat />
+      <ScrollRevealText />
       <TheSplit />
       <ProtocolAgnostic />
       <CriteoPosition />
       <Transition />
-      <LolaStory />
-    </>
+      <LolaCarousel />
+    </ReactLenis>
   )
 }
 

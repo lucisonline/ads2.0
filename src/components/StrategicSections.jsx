@@ -1,231 +1,233 @@
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 
-function Section({ children, className = '', dark = true, id }) {
+function useReveal(margin = '-100px') {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
-
-  return (
-    <section
-      ref={ref}
-      id={id}
-      className={`section ${dark ? 'section--dark' : 'section--light'} ${className}`}
-    >
-      <motion.div
-        className="section__inner"
-        initial={{ opacity: 0, y: 40 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-      >
-        {children}
-      </motion.div>
-    </section>
-  )
-}
-
-function Label({ children }) {
-  return <span className="label">{children}</span>
+  const inView = useInView(ref, { once: true, margin })
+  return [ref, inView]
 }
 
 export function TitleScreen() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end start'],
+  })
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+  const y = useTransform(scrollYProgress, [0, 0.7], [0, -80])
+
   return (
-    <section className="section section--dark section--hero">
+    <section ref={ref} className="hero">
+      <motion.div className="hero__content" style={{ opacity, y }}>
+        <p className="hero__eyebrow">Design Strategy / Research</p>
+        <h1 className="hero__title">Ads&nbsp;2.0</h1>
+        <p className="hero__sub">
+          How advertising changes when<br />
+          AI agents become the customer.
+        </p>
+      </motion.div>
+
       <motion.div
-        className="section__inner"
+        className="hero__scroll-indicator"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.2, ease: 'easeOut' }}
+        transition={{ delay: 2, duration: 1 }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
+        <motion.span
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <Label>Design Strategy / Research</Label>
-        </motion.div>
-        <motion.h1
-          className="hero-title"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-        >
-          Ads 2.0
-        </motion.h1>
-        <motion.p
-          className="hero-subtitle"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-        >
-          How advertising changes when AI agents become the customer.
-        </motion.p>
-        <motion.div
-          className="scroll-hint"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-        >
-          <span>Scroll</span>
-          <motion.div
-            className="scroll-hint__line"
-            animate={{ scaleY: [0, 1, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </motion.div>
+          ↓
+        </motion.span>
       </motion.div>
     </section>
   )
 }
 
 export function TheThreat() {
+  const [ref, inView] = useReveal()
+
   return (
-    <Section id="threat">
-      <Label>01 — The Threat</Label>
-      <h2 className="section-title">
-        AI is an existential threat<br />to advertising as we know it.
-      </h2>
-      <div className="card-grid">
-        <div className="card">
-          <div className="card__icon">🤖</div>
-          <h3>Agents browse for users now</h3>
-          <p>
-            The consumer no longer scrolls, clicks, and compares. Their AI agent does it for them —
-            filtering, negotiating, and deciding at machine speed.
-          </p>
-        </div>
-        <div className="card">
-          <div className="card__icon">🎯</div>
-          <h3>Attention is obsolete</h3>
-          <p>
-            The ad industry was built on capturing human attention. Agents don't have attention — they have instructions.
-          </p>
-        </div>
-        <div className="card">
-          <div className="card__icon">🌐</div>
-          <h3>The journey is everywhere</h3>
-          <p>
-            The shopper journey has fragmented across agents, surfaces, and protocols. There is no single funnel anymore.
-          </p>
+    <section className="threat" ref={ref}>
+      <div className="threat__inner">
+        <motion.p
+          className="threat__counter"
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6 }}
+        >
+          01
+        </motion.p>
+
+        <motion.h2
+          className="threat__headline"
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.1 }}
+        >
+          AI is an existential threat to advertising as we know&nbsp;it.
+        </motion.h2>
+
+        <div className="threat__columns">
+          <motion.div
+            className="threat__left"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <p>
+              The ad industry was built on capturing human attention. But agents don't
+              have attention — they have <em>instructions</em>.
+            </p>
+            <p>
+              The consumer no longer scrolls, clicks, and compares.
+              Their AI agent does it — filtering, negotiating, deciding at machine speed.
+              The shopper journey has fragmented across agents, surfaces, and protocols.
+            </p>
+          </motion.div>
+          <motion.div
+            className="threat__right"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <blockquote>
+              There is no<br />single funnel<br />anymore.
+            </blockquote>
+          </motion.div>
         </div>
       </div>
-    </Section>
+    </section>
   )
 }
 
 export function TheSplit() {
+  const sectionRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+
+  // Both circles sit at center; x transform spreads / merges them
+  const leftX = useTransform(scrollYProgress, [0.15, 0.45], [-220, -90])
+  const rightX = useTransform(scrollYProgress, [0.15, 0.45], [220, 90])
+  const centerOpacity = useTransform(scrollYProgress, [0.36, 0.46], [0, 1])
+  const textOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1])
+
   return (
-    <Section id="split">
-      <Label>02 — The Split</Label>
-      <h2 className="section-title">
-        Two types of companies are emerging.
-      </h2>
-      <div className="split-container">
-        <motion.div
-          className="split-card split-card--left"
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h3>Experience Providers</h3>
-          <p>Companies that own the user relationship and deliver personalised experiences through their own surfaces.</p>
+    <section className="split" ref={sectionRef}>
+      <div className="split__sticky">
+        <motion.div className="split__title" style={{ opacity: textOpacity }}>
+          <p className="split__num">01</p>
+          <h2 className="split__heading">Two types of companies are emerging.</h2>
         </motion.div>
-        <div className="split-divider">
-          <span>united by</span>
-          <strong>Hyperpersonalisation</strong>
+
+        <div className="split__venn">
+          {/* Left circle — Experience Providers */}
+          <motion.div
+            className="split__circle split__circle--left"
+            style={{ x: leftX }}
+          >
+            <div className="split__circle-ring" />
+            <p className="split__circle-label">Experience<br />Providers</p>
+          </motion.div>
+
+          {/* Right circle — Data Providers */}
+          <motion.div
+            className="split__circle split__circle--right"
+            style={{ x: rightX }}
+          >
+            <div className="split__circle-ring" />
+            <p className="split__circle-label">Data<br />Providers</p>
+          </motion.div>
+
+          {/* Center label — appears on overlap */}
+          <motion.div
+            className="split__center-label"
+            style={{ opacity: centerOpacity }}
+          >
+            <span className="split__center-united">united by</span>
+            <strong className="split__center-hyper">Hyperpersonalisation</strong>
+          </motion.div>
         </div>
-        <motion.div
-          className="split-card split-card--right"
-          initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <h3>Data Providers</h3>
-          <p>Companies that power the ecosystem by providing context, preferences, and signals to agents and platforms.</p>
+
+        {/* Descriptions below the Venn */}
+        <motion.div className="split__descriptions" style={{ opacity: textOpacity }}>
+          <p className="split__desc split__desc--left">
+            Own the user relationship. Deliver personalised experiences through their own surfaces.
+          </p>
+          <p className="split__desc split__desc--right">
+            Power the ecosystem. Provide context, preferences, and signals to agents and platforms.
+          </p>
         </motion.div>
       </div>
-      <div className="section-note">
-        <p>
-          <strong>MCP</strong> (Model Context Protocol) lets apps learn user workflows and shape purchases.
-          New modular ad formats are needed to serve agents as a new customer segment.
-        </p>
-      </div>
-    </Section>
+    </section>
   )
 }
 
 export function ProtocolAgnostic() {
+  const [ref, inView] = useReveal()
+
   return (
-    <Section id="protocol">
-      <Label>03 — Protocol Agnostic</Label>
-      <h2 className="section-title">
-        Protocols don't care about the app.
-      </h2>
-      <p className="section-body">
-        The companion could be ChatGPT, Replika, a custom enterprise agent, or something that doesn't exist yet.
-        The protocol layer is neutral — it routes context and intent regardless of which AI is on either end.
-      </p>
-      <div className="protocol-grid">
-        {['ChatGPT', 'Replika', 'Custom Agent', 'Companion App'].map((name, i) => (
-          <motion.div
-            key={name}
-            className="protocol-chip"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1, duration: 0.4 }}
-          >
-            {name}
-          </motion.div>
-        ))}
-      </div>
-      <p className="section-body" style={{ marginTop: '2rem' }}>
-        For this demo, we use a <strong>companion app</strong> — an always-on AI that knows Lola's context and acts on her behalf.
-      </p>
-    </Section>
+    <section className="protocol" ref={ref}>
+      <motion.div
+        className="protocol__inner"
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.7 }}
+      >
+        <p className="protocol__num">02</p>
+        <p className="protocol__text">
+          <strong>MCP</strong> lets apps learn user workflows and shape purchases.
+          New modular formats are needed to serve agents as a new customer segment.
+          Protocols are app-agnostic — the companion could be anything.
+        </p>
+        <div className="protocol__chips">
+          {['ChatGPT', 'Replika', 'Custom Agent', 'Companion App'].map((n) => (
+            <span key={n} className="protocol__chip">{n}</span>
+          ))}
+        </div>
+      </motion.div>
+    </section>
   )
 }
 
 export function CriteoPosition() {
+  const [ref, inView] = useReveal()
+
   return (
-    <Section id="criteo">
-      <Label>04 — Criteo's Position</Label>
-      <h2 className="section-title">
-        To survive, Criteo needs to be there.<br />
-        And adapt fast.
-      </h2>
-      <p className="section-body">
-        The companies that thrive will be the ones embedded in the agentic layer —
-        providing signals, formats, and bidding infrastructure that agents can consume natively.
-        Criteo's commerce data and retail relationships become the foundation for agent-native advertising.
-      </p>
-    </Section>
+    <section className="criteo" ref={ref}>
+      <motion.div
+        className="criteo__inner"
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.9 }}
+      >
+        <p className="criteo__num">03</p>
+        <h2 className="criteo__quote">
+          To survive, Criteo needs to be embedded in the agentic layer — providing
+          signals, formats, and bidding infrastructure that agents consume&nbsp;natively.
+        </h2>
+      </motion.div>
+    </section>
   )
 }
 
 export function Transition() {
+  const [ref, inView] = useReveal()
+
   return (
-    <section className="section section--transition">
+    <section className="trans" ref={ref}>
       <motion.div
-        className="section__inner"
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1, ease: 'easeOut' }}
+        className="trans__inner"
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 1 }}
       >
-        <p className="transition-pre">Now that we've set the stage...</p>
-        <h2 className="transition-title">
-          Let's jump into the future.
+        <h2 className="trans__title">
+          Let's jump into<br />the&nbsp;future.
         </h2>
-        <p className="transition-sub">Meet Lola. She lives in 2030.</p>
-        <motion.div
-          className="transition-line"
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2, delay: 0.3, ease: 'easeInOut' }}
-        />
+        <p className="trans__sub">Meet Lola. It's&nbsp;2030.</p>
       </motion.div>
     </section>
   )

@@ -1,0 +1,137 @@
+========================================
+ADS 2.0 — ALL SITE TEXT CONTENT
+========================================
+
+
+--- HERO ---
+Eyebrow: Design Strategy / Research
+Title: Ads 2.0
+Subtitle: How advertising changes when AI agents become the customer.
+
+
+--- SCROLL REVEAL TEXT ---
+Paragraph 1: AI is an existential threat to advertising.
+Paragraph 2: Audiences used to browse. Now agents browse for them. If an AI is picking your flights, comparing your options, buying your groceries — who exactly is the ad for?
+Paragraph 3: The ad industry was built on attention. Agents don't have attention. They have instructions.
+Paragraph 4: The ecosystem is shifting.
+Paragraph 5: The shopper journey is now everywhere.
+
+
+--- VENN DIAGRAM (The Split) ---
+Section number: 01
+Heading: Two types of companies are emerging.
+Left circle: Experience Providers
+Right circle: Data Providers
+Center label: united by / Hyperpersonalisation
+Left description: Own the user relationship. Deliver personalised experiences through their own surfaces.
+Right description: Power the ecosystem. Provide context, preferences, and signals to agents and platforms.
+
+
+--- PROTOCOL AGNOSTIC ---
+Section number: 02
+Text: MCP lets apps learn user workflows and shape purchases. New modular formats are needed to serve agents as a new customer segment. Protocols are app-agnostic — the companion could be anything.
+Chips: ChatGPT, Replika, Custom Agent, Companion App
+
+
+--- CRITEO POSITION ---
+Section number: 03
+Quote: To survive, Criteo needs to be embedded in the agentic layer — providing signals, formats, and bidding infrastructure that agents consume natively.
+
+
+--- TRANSITION ---
+Title: Let's jump into the future.
+Subtitle: Meet Lola. It's 2030.
+
+
+--- LOLA'S STORY (Carousel) ---
+Header: Lola's Story
+Header note: Swipe through Lola's journey. Tap (+) to see what her companion does behind the scenes.
+
+Slide 01 — Dreaming
+  Lola: Three months before summer vacation, Lola still doesn't know where to go on holiday.
+  Companion: Knows she usually goes on vacation around this time. Scanning for signals.
+
+Slide 02 — The Spark
+  Lola: She is exposed to a personalized feed and watches a video of a surfing influencer in Lanzarote — one she'd seen before.
+  Companion: Follows her through her journey, no matter the surface. Feeds Lola's context to other agents (social, etc.).
+
+Slide 03 — Sharing Intent
+  Lola: Lola sends a message to her best friend to talk about their upcoming vacation and suggests Lanzarote.
+  Companion: Once they agree, starts building an itinerary for her.
+
+Slide 04 — Signal to Market
+  Lola: Criteo's agent identifies a strong opportunity with influence and sends the information to brands and retailers.
+  Companion: Adds info to his memory and sends this signal to other agents for bidding with her profile and context.
+
+Slide 05 — Personalized Influence
+  Lola: A booking agent dynamically generates an ad with an AI influencer in her personalized feed, talking about Lanzarote being the best offer — hotels tailored for Lola.
+  Companion: Starts building instructions to gather all best options — flight tickets and hotels using Agentic negotiable ad formats.
+
+Slide 06 — Smart Bidding
+  Lola: Behind the scenes, agents start bidding and making choices with her personal context and rules to decide what she'll be exposed to.
+  Companion: Surfaces key choices for her. Sells her on influence using her context + rules.
+
+Slide 07 — One Tap
+  Lola: Lola consults the travel package in her companion app, built just for them, and approves the journey.
+  Companion: Manages everything about payment. Informs other agents about her trip to anticipate other needs to book ahead.
+
+Slide 08 — Local Discovery
+  Lola: Lanzarote Tourist Office wins the bidding and provides the best trip activities — vegetarian restaurants, surf camp, places to visit, rentals.
+  Companion: Adds those recommendations within her trip page.
+
+Slide 09 — Companion Chat
+  Lola: Lola takes time to talk with her Companion, sharing her journey and news.
+  Companion: Pushes activity recommendations from Lanzarote Tourist Office during their exchange, interacting with other agents.
+
+Slide 10 — Lola Approves
+  Lola: She loves the suggestions and approves locations, activities, and restaurants.
+  Companion: Handles payment and reservation for everything.
+
+Slide 11 — The Surf Suit
+  Lola: A few days later, her Companion knows she's missing a surf suit. He finds the best one using her personal context and preferences — allergies, materials, past injuries.
+  Companion: Interacts with several retailers' agents. Displays organic and sponsored products.
+
+Slide 12 — Virtual Try-On
+  Lola: He shows the surf suit directly on her virtual avatar.
+  Companion: Retrieves the virtual asset of the surf suit (Virtual Asset ad format) and finds the best deal — Decathlon.
+
+Slide 13 — Everything Ready
+  Lola: Her Companion proactively builds an app with all options and cost structure — hotels, rentals, flights, activities — centralized in a mini personal app.
+  Companion: Everything is ready for her trip!
+
+Slide 14 — 3 Months Later...
+  Lola: Lola arrives in Lanzarote. She can't wait to start the surf camp and explore the island. She refers to the travel page built by her agent — all information centralized.
+  Companion: Follows her trip, continuing to push the best recommendations along the way.
+
+
+--- LOLA'S STORY (Timeline version — LolaStory.jsx, not currently in App) ---
+
+Step 01: Lola is a 28-year-old designer in Paris. She has a companion AI that knows her routines, preferences, and goals.
+  Companion: Knows she usually holidays around this time. Scanning for signals.
+
+Step 02: She watches a surfing influencer's video from Lanzarote on her feed. Crystal-clear water, volcanic landscape, perfect waves. Something clicks.
+  Companion: Negotiated with the social feed's agent to push content matching her context — travel-ready, adventure-seeking, budget available. The video wasn't random.
+
+Step 03: "Hey, have you seen Lanzarote? We should go!" She sends the video to her best friend Marie.
+  Companion: Following her across surfaces — social, messaging, browser. Feeding context to other agents. Building a richer picture of intent.
+
+Step 04: After a few voice messages, the decision is made. Lanzarote. Two weeks from now.
+  Companion: Starts building an itinerary. Stores destination + dates. Sends intent signals to airline, hotel, and activity agents — triggering a bidding process.
+
+Step 05: Three flight options, two hotels — all matching her budget and dates. She picks in under a minute.
+  Companion: Gathered options using agentic negotiable ad formats. Airlines and hotels bid based on her context + rules. The companion decides what gets surfaced.
+
+Step 06: One tap. Flights and hotel confirmed. A clean summary appears on her trip page.
+  Companion: Handles payment. Informs airline, hotel, and activity agents to anticipate her arrival. Other agents now know she's Lanzarote-bound.
+
+Step 07: She arrives. Her trip page already has recommendations — surf school, volcanic hike, seafood near the hotel.
+  Companion: Pushes recommendations from the Lanzarote tourist office via partner agents. Handles reservations. Each option is contextual, not generic.
+
+Step 08: She needs a surf suit. Three options appear — different brands, styles, prices. Decathlon catches her eye.
+  Companion: Interacts with retailers' agents. Shows organic and sponsored products. Retrieves a virtual asset of the suit. Finds the best deal.
+
+Step 09: Surf lessons, local food, sunset hikes. The trip of a lifetime. Every recommendation felt natural.
+  Companion: Continues optimizing. Learning from each interaction. The advertising was invisible — but it was everywhere.
+
+Closing title: She never felt "advertised to."
+Closing body: The advertising was invisible — but it powered the entire experience.
