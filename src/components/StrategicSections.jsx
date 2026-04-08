@@ -227,7 +227,7 @@ export function Transition() {
         <h2 className="trans__title">
           Let's jump into<br />the&nbsp;future.
         </h2>
-        <p className="trans__sub">Meet Lola. It's&nbsp;2030.</p>
+        <p className="trans__sub">Meet Lola. It's 2030.</p>
       </motion.div>
     </section>
   )

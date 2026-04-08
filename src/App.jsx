@@ -13,40 +13,37 @@ import LolaCarousel from './components/LolaCarousel'
 import './App.css'
 
 function SnapSetup() {
+  const lenis = useLenis()
   const snapRef = useRef(null)
 
-  useLenis((lenis) => {
-    // Initialize snap once on first lenis callback
-    if (snapRef.current) return
+  useEffect(() => {
+    if (!lenis || snapRef.current) return
 
     const snap = new Snap(lenis, {
-      type: 'mandatory',
-      lerp: 0.1,
-      debounce: 150,
+      type: 'proximity',
+      lerp: 0.035,
+      easing: (t) => 1 - Math.pow(1 - t, 4),
+      duration: 1.5,
+      debounce: 200,
     })
     snapRef.current = snap
 
-    // Snap to all fullscreen sections (100vh ones)
     document.querySelectorAll('[data-lenis-snap]').forEach((el) => {
-      snap.addElement(el, { align: ['start'] })
+      snap.addElement(el, { align: ['start'], ignoreSticky: true })
     })
-  })
 
-  useEffect(() => {
     return () => {
-      if (snapRef.current) {
-        snapRef.current.destroy()
-        snapRef.current = null
-      }
+      snap.destroy()
+      snapRef.current = null
     }
-  }, [])
+  }, [lenis])
 
   return null
 }
 
 function App() {
   return (
-    <ReactLenis root>
+    <ReactLenis root options={{ lerp: 0.04, duration: 1.8 }}>
       <SnapSetup />
       <TitleScreen />
       <ScrollRevealText />

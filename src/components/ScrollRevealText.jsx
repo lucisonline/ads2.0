@@ -54,7 +54,7 @@ export default function ScrollRevealText() {
   })
 
   return (
-    <section ref={containerRef} className="sr">
+    <section ref={containerRef} className="sr" >
       <div className="sr__sticky">
         <div className="sr__content">
           {PARAGRAPHS.map((text, i) => (

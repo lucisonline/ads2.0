@@ -6,7 +6,12 @@ import { Bot } from 'lucide-react'
 import lolaWindow from '../assets/story/photos/lola-window.jpg'
 import surferBeach from '../assets/story/photos/surfer-beach.jpg'
 import lolaPhone from '../assets/story/photos/lola-phone.jpg'
+import lolaSurfsuit from '../assets/story/photos/lola-surfsuit.jpg'
 import surferSitting from '../assets/story/photos/surfer-sitting.jpeg'
+
+// Videos
+import videoSurf from '../assets/story/videos/video-surf.gif'
+import hotelTour from '../assets/story/videos/hotel-tour.gif'
 
 // Icons
 import iconCocktail from '../assets/story/icons/cocktail.png'
@@ -19,15 +24,14 @@ import iconFood from '../assets/story/icons/food-bowl.png'
    ============================ */
 
 const SCREENS = [
-  { id: 'intro', type: 'intro', bg: '#0c0820' },
-  { id: 'spark', type: 'spark', bg: '#1a0e08' },
+  { id: 'intro', type: 'intro', bg: '#000000' },
+  { id: 'spark', type: 'spark', bg: '#0d1f33' },
   { id: 'messages', type: 'messages', bg: '#f5f5f0' },
-  { id: 'agent-relay', type: 'agent-relay', bg: '#ffffff' },
+  { id: 'agent-relay', type: 'agent-relay', bg: '#f0ebe3' },
   { id: 'booking-wins', type: 'booking-wins', bg: '#ffffff' },
   { id: 'travel-planning', type: 'travel-planning', bg: '#f8f7f4' },
   { id: 'local-discovery', type: 'local-discovery', bg: '#f5f0eb' },
-  { id: 'surf-suit', type: 'surf-suit', bg: '#d4c5a9' },
-  { id: 'arrival', type: 'arrival', bg: 'transparent' },
+  { id: 'surf-suit', type: 'surf-suit', bg: '#1a1545' },
 ]
 
 /* ============================
@@ -37,7 +41,7 @@ const SCREENS = [
 const CHAT_MESSAGES = [
   { id: 1, text: 'Hey! What do you think about surfing in Lanzarote this summer? Looks amazing omgggg', sent: true, delay: 0 },
   { id: 2, text: 'OMGGG love it', sent: false, delay: 2 },
-  { id: 3, text: "Let's go", sent: false, delay: 3.5 },
+  { id: 3, text: "Let's go 🏄‍♀️🌴☀️", sent: false, delay: 3.5 },
 ]
 
 function TypingIndicator({ isVisible }) {
@@ -138,38 +142,172 @@ function ChatScreen() {
 }
 
 /* ============================
-   VALIDATE CTA COMPONENT
+   VALIDATE OVERLAY COMPONENT (looping click animation)
    ============================ */
 
-function ValidateCTA() {
-  const [validated, setValidated] = useState(false)
+function ValidateOverlay() {
   const ref = useRef(null)
   const inView = useInView(ref, { amount: 0.5 })
+  const [phase, setPhase] = useState('idle') // idle → press → validated → fade → idle
+  const [cycle, setCycle] = useState(0)
 
   useEffect(() => {
     if (!inView) {
-      setValidated(false)
+      setPhase('idle')
       return
     }
-    const t = setTimeout(() => setValidated(true), 3000)
-    return () => clearTimeout(t)
-  }, [inView])
+
+    const timers = []
+
+    // 1. Show cursor approaching (idle state lasts 1.5s)
+    setPhase('idle')
+
+    // 2. Press the button
+    timers.push(setTimeout(() => setPhase('press'), 1800))
+
+    // 3. Button validates
+    timers.push(setTimeout(() => setPhase('validated'), 2100))
+
+    // 4. Hold validated state
+    timers.push(setTimeout(() => setPhase('fade'), 4600))
+
+    // 5. Reset and loop
+    timers.push(setTimeout(() => {
+      setPhase('idle')
+      setCycle((c) => c + 1)
+    }, 5600))
+
+    return () => timers.forEach(clearTimeout)
+  }, [inView, cycle])
+
+  const isValidated = phase === 'validated' || phase === 'fade'
+  const isFading = phase === 'fade'
 
   return (
-    <div ref={ref} className="story-validate">
-      <motion.button
-        className={`story-validate__btn ${validated ? 'story-validate__btn--done' : ''}`}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        animate={validated ? { scale: [1, 1.08, 1] } : {}}
-        transition={{ duration: 0.4 }}
+    <div ref={ref} className="story-validate-overlay">
+      <motion.div
+        className="story-validate-overlay__card"
+        animate={{
+          opacity: isFading ? 0 : 1,
+        }}
+        transition={{
+          opacity: { duration: isFading ? 0.9 : 0.4, ease: 'easeInOut' },
+        }}
       >
-        {validated ? '\u2713 Validated' : 'Validate CTA'}
-      </motion.button>
-      <p className="story-validate__note">
-        afficher quelques secondes apr&egrave;s,<br />
-        et ajouter une animation qu&rsquo;on clic a &eacute;t&eacute; fait et que c&rsquo;est valid&eacute;
-      </p>
+        <motion.div
+          className={`story-validate-overlay__btn ${isValidated ? 'story-validate-overlay__btn--done' : ''}`}
+          animate={{
+            scale: phase === 'press' ? 0.9 : phase === 'validated' ? [1, 1.08, 1] : 1,
+          }}
+          transition={
+            phase === 'press'
+              ? { type: 'spring', stiffness: 500, damping: 15 }
+              : { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }
+          }
+        >
+          <span className="story-validate-overlay__check">
+            {isValidated ? '✓' : ''}
+          </span>
+          {isValidated ? 'Journey Approved' : 'Approve Journey'}
+        </motion.div>
+
+        {/* Animated cursor */}
+        <motion.div
+          className="story-validate-overlay__cursor"
+          animate={{
+            opacity: phase === 'idle' || phase === 'press' ? 1 : 0,
+            x: phase === 'idle' ? [24, 0] : 0,
+            y: phase === 'idle' ? [18, 0] : 0,
+            scale: phase === 'press' ? 0.8 : 1,
+          }}
+          transition={{
+            opacity: { duration: 0.25 },
+            x: { duration: 1.4, ease: [0.25, 0.1, 0.25, 1] },
+            y: { duration: 1.4, ease: [0.25, 0.1, 0.25, 1] },
+            scale: { duration: 0.12, ease: 'easeIn' },
+          }}
+        >
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="none">
+            <path d="M1 1L1 15.5L5.5 11.5L9.5 19.5L12.5 18L8.5 10H14.5L1 1Z" fill="white" stroke="#333" strokeWidth="1.5" strokeLinejoin="round" />
+          </svg>
+        </motion.div>
+      </motion.div>
+    </div>
+  )
+}
+
+/* ============================
+   MINI TRAVEL WEBSITE COMPONENT
+   ============================ */
+
+function MiniTravelWebsite() {
+  return (
+    <div className="mini-travel">
+      {/* Header */}
+      <div className="mini-travel__header">
+        <div className="mini-travel__header-dot" />
+        <div className="mini-travel__header-dot" />
+        <div className="mini-travel__header-dot" />
+        <span className="mini-travel__header-url">lola-travel.companion.ai</span>
+      </div>
+
+      {/* Hero banner */}
+      <div className="mini-travel__hero">
+        <span className="mini-travel__hero-tag">Summer 2030</span>
+        <h4 className="mini-travel__hero-title">Lanzarote</h4>
+        <p className="mini-travel__hero-dates">Jul 12 — Jul 26 &middot; 2 travelers</p>
+      </div>
+
+      {/* Flight card */}
+      <div className="mini-travel__card">
+        <div className="mini-travel__card-icon">✈</div>
+        <div className="mini-travel__card-info">
+          <span className="mini-travel__card-label">Flight</span>
+          <span className="mini-travel__card-value">Paris CDG → Lanzarote ACE</span>
+          <span className="mini-travel__card-detail">Jul 12, 08:30 &middot; Direct &middot; 4h15</span>
+        </div>
+        <div className="mini-travel__card-price">&euro;186</div>
+      </div>
+
+      {/* Hotel card */}
+      <div className="mini-travel__card">
+        <div className="mini-travel__card-icon">🏨</div>
+        <div className="mini-travel__card-info">
+          <span className="mini-travel__card-label">Hotel</span>
+          <span className="mini-travel__card-value">Casa del Sol Boutique</span>
+          <span className="mini-travel__card-detail">14 nights &middot; Ocean view &middot; Breakfast incl.</span>
+        </div>
+        <div className="mini-travel__card-price">&euro;1,240</div>
+      </div>
+
+      {/* Activities */}
+      <div className="mini-travel__section">
+        <span className="mini-travel__section-title">Activities</span>
+        <div className="mini-travel__activities">
+          <div className="mini-travel__activity">
+            <span className="mini-travel__activity-emoji">🏄‍♀️</span>
+            <span>Surf Camp</span>
+          </div>
+          <div className="mini-travel__activity">
+            <span className="mini-travel__activity-emoji">🌋</span>
+            <span>Volcano Hike</span>
+          </div>
+          <div className="mini-travel__activity">
+            <span className="mini-travel__activity-emoji">🍽</span>
+            <span>Food Tour</span>
+          </div>
+          <div className="mini-travel__activity">
+            <span className="mini-travel__activity-emoji">🚗</span>
+            <span>Car Rental</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Total */}
+      <div className="mini-travel__total">
+        <span>Total estimated</span>
+        <span className="mini-travel__total-price">&euro;1,892</span>
+      </div>
     </div>
   )
 }
@@ -183,6 +321,7 @@ import logoExpedia from '../assets/story/logos/expedia.svg'
 import logoBooking from '../assets/story/logos/booking.svg'
 import logoAirbnb from '../assets/story/logos/airbnb.svg'
 import logoCriteo from '../assets/story/logos/criteo.svg'
+import logoDecathlon from '../assets/story/logos/decathlon.png'
 import logoKayak from '../assets/story/logos/kayak.svg'
 
 // Each logo is positioned around the central text block via CSS (top/left %).
@@ -203,37 +342,16 @@ const BRANDS = [
 function ScreenIntro() {
   return (
     <div className="story-screen__layout story-screen__layout--intro">
-      <div className="story-intro__photo">
-        <img src={lolaWindow} alt="Lola looking out the window" />
-      </div>
       <div className="story-intro__content">
-        <motion.p
-          className="story-intro__label"
-          initial={{ opacity: 0, y: 10 }}
+        <motion.h3
+          className="story-intro__title"
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.6 }}
         >
-          Meet Lola
-        </motion.p>
-        <motion.p
-          className="story-intro__year"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-        >
-          it&rsquo;s 2030.
-        </motion.p>
-        <motion.p
-          className="story-intro__text"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-        >
           Three months before summer vacation, Lola still doesn&rsquo;t know where to go on holiday.
-        </motion.p>
+        </motion.h3>
       </div>
     </div>
   )
@@ -271,16 +389,7 @@ function ScreenSpark() {
           viewport={{ once: false }}
           transition={{ duration: 0.7 }}
         >
-          <img src={surferBeach} alt="Surfer on beach in Lanzarote" />
-        </motion.div>
-        <motion.div
-          className="story-spark__img story-spark__img--offset"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-        >
-          <img src={surferSitting} alt="Surfer sitting on beach" />
+          <img src={videoSurf} alt="Surfing influencer video from Lanzarote" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
         </motion.div>
       </div>
     </div>
@@ -367,30 +476,37 @@ function AgentRelayLogos() {
 function ScreenBookingWins() {
   return (
     <div className="story-screen__layout story-screen__layout--booking">
+      <div className="story-booking__content">
+        <motion.h3
+          className="story-booking__title"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6 }}
+        >
+          <span>Booking.com</span> wins the bid and dynamically generates an AI influencer in her personalized feed.
+        </motion.h3>
+        <motion.p
+          className="story-booking__companion"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <Bot size={12} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
+          Starts building instructions to gather all best options — flight tickets and hotels using agentic negotiable ad formats.
+        </motion.p>
+      </div>
       <motion.div
         className="story-booking__visual"
-        initial={{ opacity: 0, x: -30 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
         transition={{ duration: 0.7 }}
       >
-        <div className="story-booking__brand">
-          <span className="story-booking__brand-name">Booking<span className="story-booking__brand-dot">.com</span></span>
-        </div>
         <div className="story-booking__image">
-          <img src={surferBeach} alt="Lanzarote beach - personalized ad" />
+          <img src={hotelTour} alt="AI influencer hotel tour - personalized ad" />
         </div>
-      </motion.div>
-      <motion.div
-        className="story-booking__content"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false }}
-        transition={{ duration: 0.7, delay: 0.15 }}
-      >
-        <p className="story-booking__text">
-          <strong>Booking.com wins the bid</strong> and dynamically &amp; generates an AI influencer in her personalized feed, talking about hotels tailored for Lola in Lanzarote
-        </p>
       </motion.div>
     </div>
   )
@@ -399,37 +515,27 @@ function ScreenBookingWins() {
 function ScreenTravelPlanning() {
   return (
     <div className="story-screen__layout story-screen__layout--travel">
-      <motion.div
-        className="story-travel__content"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false }}
-        transition={{ duration: 0.7 }}
-      >
-        <p className="story-travel__text">
-          When she opens the app the agent has built her itinerary.
-        </p>
-        <p className="story-travel__text story-travel__text--sub">
-          Lola consults the travel package in her companion app, built just for them, and approves the journey.
-        </p>
-        <p className="story-travel__text story-travel__text--companion">
-          <Bot size={12} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
-          In the background the companion Manages everything about payment. Informs other agents about her trip to anticipate other needs to book ahead.
-        </p>
-      </motion.div>
-      <div className="story-travel__app">
+      <div className="story-travel__content">
+        <motion.h3
+          className="story-travel__title"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6 }}
+        >
+          Her companion has built her itinerary within a travel package. She approves, and the companion handle everything.
+        </motion.h3>
+      </div>
+      <div className="story-travel__visual">
         <motion.div
-          className="story-travel__app-window"
+          className="story-travel__app-wrapper"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <div className="story-travel__app-header">Personal website travel planning</div>
-          <div className="story-travel__app-body">
-            <div className="story-travel__app-placeholder" />
-          </div>
-          <ValidateCTA />
+          <MiniTravelWebsite />
+          <ValidateOverlay />
         </motion.div>
       </div>
     </div>
@@ -482,54 +588,41 @@ function ScreenLocalDiscovery() {
 function ScreenSurfSuit() {
   return (
     <div className="story-screen__layout story-screen__layout--suit">
-      <motion.div
-        className="story-suit__content"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false }}
-        transition={{ duration: 0.7 }}
-      >
-        <p className="story-suit__text">
-          Her Companion knows she&rsquo;s missing a surf suit. He finds the best one using her personal context and preferences &mdash; allergies, materials, past injuries.
-        </p>
-        <p className="story-suit__text story-suit__text--sub">
-          He shows the surf suit directly on her virtual avatar. Retrieves the virtual asset (Virtual Asset ad format) and finds the best deal &mdash; Decathlon.
-        </p>
-      </motion.div>
+      <div className="story-suit__content">
+        <motion.h3
+          className="story-suit__title"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6 }}
+        >
+          Her Companion knows she&rsquo;s missing a surf suit. He finds the best one using her personal context &mdash; allergies, materials, past injuries.
+        </motion.h3>
+        <motion.p
+          className="story-suit__companion"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <Bot size={12} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
+          Retrieves the virtual asset of the surf suit and finds the best deal. Displays organic and sponsored products.
+        </motion.p>
+      </div>
       <motion.div
         className="story-suit__visual"
-        initial={{ opacity: 0, x: 40 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
         transition={{ duration: 0.7, delay: 0.2 }}
       >
-        <div className="story-suit__avatar">
-          <img src={lolaPhone} alt="Lola virtual avatar" />
-        </div>
         <div className="story-suit__brand">
-          <span className="story-suit__brand-logo">DECATHLON</span>
-          <p className="story-suit__brand-note">AI avatar with the suit</p>
+          <img src={logoDecathlon} alt="Decathlon" className="story-suit__brand-logo" />
+        </div>
+        <div className="story-suit__avatar">
+          <img src={lolaSurfsuit} alt="Lola virtual avatar with surf suit" />
         </div>
       </motion.div>
-    </div>
-  )
-}
-
-function ScreenArrival() {
-  return (
-    <div className="story-screen__layout story-screen__layout--arrival">
-      <div className="story-arrival__content">
-        <motion.h3
-          className="story-arrival__title"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.8 }}
-        >
-          She arrives in Lanzarote.<br />
-          She can&rsquo;t wait to start the surf camp and explore the island.
-        </motion.h3>
-      </div>
     </div>
   )
 }
@@ -543,7 +636,30 @@ const SCREEN_RENDERERS = {
   'travel-planning': ScreenTravelPlanning,
   'local-discovery': ScreenLocalDiscovery,
   'surf-suit': ScreenSurfSuit,
-  'arrival': ScreenArrival,
+}
+
+function ArrivalSection() {
+  const total = SCREENS.length + 1
+  return (
+    <section className="arrival story-screen--dark" data-lenis-snap>
+      <img className="arrival__bg" src={surferBeach} alt="" />
+      <div className="arrival__content">
+        <motion.h3
+          className="arrival__title"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.8 }}
+        >
+          She arrives in Lanzarote.<br />
+          She can&rsquo;t wait to start the surf camp and explore the island.
+        </motion.h3>
+      </div>
+      <div className="story-screen__num">
+        {String(total).padStart(2, '0')} / {String(total).padStart(2, '0')}
+      </div>
+    </section>
+  )
 }
 
 /* ============================
@@ -563,25 +679,26 @@ function StoryScreen({ screen, index, total }) {
   const scale = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [1.02, 1, 1, 0.98])
 
   const Renderer = SCREEN_RENDERERS[screen.type]
-  const isDark = ['intro', 'spark', 'arrival'].includes(screen.type)
-  const isArrival = screen.type === 'arrival'
+  const isDark = ['intro', 'spark'].includes(screen.type)
 
   return (
     <motion.section
       ref={ref}
-      className={`story-screen ${isDark ? 'story-screen--dark' : 'story-screen--light'} ${isArrival ? 'story-screen--arrival' : ''}`}
-      style={isArrival
-        ? { backgroundImage: `url(${surferBeach})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-        : { background: screen.bg }
-      }
+      className={`story-screen ${isDark ? 'story-screen--dark' : 'story-screen--light'}`}
+      style={{ background: screen.bg }}
       data-lenis-snap
     >
-      {/* Floating logos — rendered at section level (100vh) for correct absolute positioning */}
+      {/* Rendered at section level — outside parallax inner */}
+      {screen.type === 'intro' && (
+        <div className="story-intro__photo">
+          <img src={lolaWindow} alt="" />
+        </div>
+      )}
       {screen.type === 'agent-relay' && <AgentRelayLogos />}
 
       <motion.div
         className="story-screen__inner"
-        style={isArrival ? { opacity } : { y: smoothY, opacity, scale }}
+        style={{ y: smoothY, opacity, scale }}
       >
         {Renderer && <Renderer />}
       </motion.div>
@@ -634,6 +751,7 @@ export default function LolaCarousel() {
         />
       ))}
 
+      <ArrivalSection />
       <EndCard />
     </>
   )
