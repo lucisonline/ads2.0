@@ -150,18 +150,18 @@ export function TheSplit() {
             </div>
           </motion.div>
 
-          {/* Center label — appears on overlap */}
+          {/* Center label — appears below circles on overlap */}
           <motion.div
             className="split__center-label"
             style={{ opacity: centerOpacity }}
           >
-            <strong className="split__center-hyper">Hyperpersonalization</strong>
             <div className="split__arrow">
               <svg width="24" height="80" viewBox="0 0 24 80" fill="none">
                 <line x1="12" y1="0" x2="12" y2="60" stroke="var(--accent-5)" strokeWidth="2.5" />
                 <polygon points="4,56 12,76 20,56" fill="var(--accent-5)" />
               </svg>
             </div>
+            <strong className="split__center-hyper">Tied together by<br />hyperpersonalization</strong>
           </motion.div>
         </div>
       </div>

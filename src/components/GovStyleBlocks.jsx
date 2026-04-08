@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 
 /* ============================
    Shared: word-by-word scroll reveal
@@ -15,17 +16,29 @@ function Word({ word, range, progress }) {
   )
 }
 
-function RevealPara({ text, start, end, progress, className }) {
+function InlineIcon({ children, range, progress }) {
+  const opacity = useTransform(progress, range, [0, 1])
+  return (
+    <motion.div className="gov__inline-icon-wrap" style={{ opacity }}>
+      {children}
+    </motion.div>
+  )
+}
+
+function RevealPara({ text, start, end, progress, className, inlineIcon }) {
   const words = text.split(' ')
   const span = end - start
+  const iconStart = start + ((words.length - 1) / words.length) * span
+  const iconEnd = start + span
   return (
-    <p className={className}>
+    <div className={className}>
       {words.map((word, i) => {
         const ws = start + (i / words.length) * span
         const we = start + ((i + 1) / words.length) * span
         return <Word key={i} word={word} range={[ws, we]} progress={progress} />
       })}
-    </p>
+      {inlineIcon}
+    </div>
   )
 }
 
@@ -47,7 +60,6 @@ export function GovBlock1() {
     <section className="gov gov--1" ref={ref}>
       <div className="gov__sticky">
         <div className="gov__center">
-          <p className="gov__eyebrow">The Shift</p>
           {BLOCK1_TEXT.map((text, i) => (
             <RevealPara
               key={i}
@@ -87,6 +99,22 @@ export function GovBlock2() {
     end: ((i + 1) / total) * 0.85,
   }))
 
+  const inlineIcons = [
+    <DotLottieReact
+      key="lottie-eye"
+      src="/animation-visibility.lottie"
+      loop
+      autoplay
+      style={{ width: 60, height: 60 }}
+    />,
+    <img
+      key="gif-cursor"
+      src="/replace-gif-color.gif"
+      alt=""
+      style={{ width: 60, height: 60, objectFit: 'contain' }}
+    />,
+  ]
+
   return (
     <section className="gov gov--2" ref={ref}>
       <div className="gov__sticky">
@@ -99,6 +127,7 @@ export function GovBlock2() {
               end={slices[i].end}
               progress={scrollYProgress}
               className="gov__big"
+              inlineIcon={inlineIcons[i]}
             />
           ))}
         </div>

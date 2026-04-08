@@ -1,24 +1,24 @@
 import { ReactLenis } from 'lenis/react'
 import {
-  TitleScreen,
   TheSplit,
-  CriteoPosition,
   Transition,
 } from './components/StrategicSections'
-import { GovBlock1, GovBlock2, GovBlock3 } from './components/GovStyleBlocks'
+import { GovBlock1, GovBlock2 } from './components/GovStyleBlocks'
+import AgentPages from './components/AgentPages'
 import LolaCarousel from './components/LolaCarousel'
+import EndPage from './components/EndPage'
+import CriteoStatement from './components/CriteoStatement'
 import './App.css'
 
 function App() {
   return (
     <ReactLenis root>
-
-      <TitleScreen />
+      <EndPage />
       <GovBlock1 />
       <GovBlock2 />
-      <GovBlock3 />
+      <AgentPages />
       <TheSplit />
-      <CriteoPosition />
+      <CriteoStatement />
       <Transition />
       <LolaCarousel />
     </ReactLenis>

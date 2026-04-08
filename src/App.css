@@ -1,4 +1,83 @@
 /* =============================================
+   INTRO HERO — Scroll-driven cursor + hand meeting
+   ============================================= */
+
+.intro-hero {
+  height: 400vh;
+  position: relative;
+}
+
+.intro-hero__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #f3f1ec;
+}
+
+.intro-hero__title {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--sans);
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 700;
+  color: #000;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.intro-hero__subtitle {
+  position: absolute;
+  bottom: 12%;
+  right: 8%;
+  font-family: var(--sans);
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 700;
+  font-style: italic;
+  color: #000;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.intro-hero__hand {
+  position: absolute;
+  top: -10%;
+  right: -20%;
+  width: 75%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.intro-hero__hand img {
+  width: 100%;
+  height: auto;
+  display: block;
+  mix-blend-mode: multiply;
+}
+
+.intro-cursor {
+  z-index: 3;
+  pointer-events: none;
+}
+
+.intro-cursor svg {
+  width: clamp(40px, 5vw, 65px);
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .intro-hero { height: 300vh; }
+  .intro-hero__title { font-size: clamp(1.2rem, 5vw, 1.8rem); top: 12%; }
+  .intro-hero__subtitle { font-size: clamp(1.2rem, 5vw, 1.8rem); bottom: 8%; right: 5%; }
+  .intro-hero__hand { width: 90%; right: -30%; }
+  .intro-cursor svg { width: 35px; }
+}
+
+/* =============================================
    GOV-STYLE BLOCKS — Scroll-reveal word lighting
    Words transition from dim gray → bright cream on scroll
    ============================================= */
@@ -81,6 +160,16 @@
   margin-bottom: 0;
 }
 
+.gov__inline-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-left: 0.2em;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+}
+
 /* Block 3 — Separate section, smaller text */
 .gov--3 {
   height: 250vh;
@@ -112,6 +201,162 @@
   .gov__big { font-size: clamp(1.6rem, 6vw, 2.5rem); margin-bottom: calc(var(--spacer) * 4); }
   .gov--3 { height: 200vh; }
   .gov__body { font-size: clamp(0.9rem, 3.5vw, 1.15rem); }
+}
+
+/* =============================================
+   AGENT PAGES — 3 scroll-driven crossfading pages
+   ============================================= */
+
+.ap {
+  position: relative;
+  background: #f3f1ec;
+}
+
+.ap__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ap-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f1ec;
+  will-change: opacity;
+}
+
+.ap-slide__motion {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+
+.ap-slide__inner {
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 clamp(2rem, 5vw, 4rem);
+}
+
+/* Page 1 — centered layout */
+.ap-slide--centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.ap-text {
+  font-family: var(--sans);
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: #000;
+  max-width: 640px;
+}
+
+.ap-text--top,
+.ap-text--bottom {
+  text-align: center;
+}
+
+.ap-image-box {
+  width: clamp(260px, 32vw, 420px);
+  height: clamp(260px, 32vw, 420px);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  flex-shrink: 0;
+}
+
+.ap-image-box__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Pages 2 & 3 — split layout */
+.ap-slide--split {
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.ap-split__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ap-split__media {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ap-split__img {
+  width: 100%;
+  max-width: 565px;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Page 3 — stacked images with robot overlay */
+.ap-split__media--stacked {
+  position: relative;
+}
+
+.ap-split__img--main {
+  width: 100%;
+  max-width: 493px;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.ap-split__img--robot {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38%;
+  max-width: 210px;
+  height: auto;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .ap-slide--split {
+    flex-direction: column;
+    text-align: center;
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .ap-text {
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+  }
+  .ap-image-box {
+    width: clamp(200px, 60vw, 300px);
+    height: clamp(200px, 60vw, 300px);
+  }
+  .ap-split__img {
+    max-width: 80vw;
+  }
+  .ap-split__img--main {
+    max-width: 80vw;
+  }
 }
 
 /* =============================================
@@ -331,7 +576,6 @@
   align-items: center;
   justify-content: center;
   padding: calc(var(--spacer) * 3);
-  overflow: hidden;
 }
 
 .split__heading {
@@ -369,13 +613,13 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2px solid rgba(80, 70, 210, 0.5);
-  background: rgba(20, 15, 80, 0.2);
+  border: 2px solid rgba(80, 70, 210, 0.7);
+  background: rgba(30, 20, 120, 0.55);
 }
 
 .split__circle--right .split__circle-ring {
-  border-color: rgba(170, 60, 100, 0.5);
-  background: rgba(80, 20, 50, 0.2);
+  border-color: rgba(170, 60, 100, 0.7);
+  background: rgba(100, 25, 60, 0.55);
 }
 
 .split__circle-content {
@@ -412,7 +656,7 @@
 .split__center-label {
   position: absolute;
   left: 50%;
-  top: -16px;
+  bottom: -120px;
   transform: translateX(-50%);
   z-index: 3;
   text-align: center;
@@ -865,6 +1109,169 @@
   font-size: 1.1rem;
   line-height: 1.7;
   color: var(--text-light-muted);
+}
+
+/* =============================================
+   END PAGE — final Sistine Chapel moment
+   ============================================= */
+
+.endpage {
+  position: relative;
+  height: 400vh;
+}
+
+.endpage__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: #f3f1ec;
+  overflow: hidden;
+}
+
+.endpage__hand {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.endpage__hand img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform: rotate(-20deg) scaleX(-1);
+  mix-blend-mode: multiply;
+}
+
+.endpage__title1,
+.endpage__title2 {
+  position: absolute;
+  font-family: var(--sans);
+  font-weight: 700;
+  color: #000;
+  letter-spacing: -0.46px;
+  white-space: nowrap;
+  z-index: 2;
+  margin: 0;
+}
+
+.endpage__title1 {
+  font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+.endpage__title2 {
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  bottom: 16%;
+  right: 5%;
+  z-index: 5;
+}
+
+.endpage-cursor {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  animation: endpage-wobble 3s ease-in-out infinite;
+}
+
+.endpage-cursor svg {
+  width: clamp(40px, 5vw, 65px);
+  height: auto;
+}
+
+@keyframes endpage-wobble {
+  0%, 100% { translate: 0 0; }
+  25% { translate: 2px -3px; }
+  50% { translate: -1px 2px; }
+  75% { translate: 3px 1px; }
+}
+
+@media (max-width: 768px) {
+  .endpage { height: 300vh; }
+  .endpage__title1 { font-size: clamp(0.75rem, 3vw, 1rem); }
+  .endpage__title2 { font-size: clamp(1.2rem, 5vw, 1.8rem); right: 4%; bottom: 10%; }
+  .endpage-cursor svg { width: 35px; }
+}
+
+/* =============================================
+   CRITEO STATEMENT — floating images + quote
+   ============================================= */
+
+.criteo-stmt {
+  position: relative;
+  background: #f3f1ec;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.criteo-stmt__sticky {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.criteo-stmt__quote {
+  font-family: var(--sans);
+  font-size: clamp(1.6rem, 3.2vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: #000;
+  text-align: center;
+  max-width: 680px;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.criteo-stmt__floating {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.criteo-stmt__img-wrap {
+  width: clamp(180px, 22vw, 320px);
+  overflow: hidden;
+}
+
+.criteo-stmt__img-wrap--bordered {
+  background: #fff;
+  padding: 6px;
+}
+
+.criteo-stmt__float-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.criteo-stmt__float-img:hover {
+  transform: scale(1.02);
+}
+
+.criteo-stmt__float-img--large {
+  width: clamp(240px, 28vw, 420px);
+  height: auto;
+  object-fit: cover;
+}
+
+.criteo-stmt__float-img--wide {
+  width: clamp(220px, 26vw, 380px);
+  height: auto;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .criteo-stmt__quote { font-size: clamp(1.2rem, 5vw, 1.8rem); max-width: 90%; }
+  .criteo-stmt__img-wrap { width: clamp(120px, 35vw, 200px); }
+  .criteo-stmt__float-img--large { width: clamp(150px, 40vw, 260px); }
+  .criteo-stmt__float-img--wide { width: clamp(140px, 38vw, 240px); }
 }
 
 /* =============================================
