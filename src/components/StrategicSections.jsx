@@ -225,9 +225,9 @@ export function Transition() {
         transition={{ duration: 1 }}
       >
         <h2 className="trans__title">
-          Let's jump into<br />the&nbsp;future.
+          You are Lola.<br />It's Saturday&nbsp;morning.
         </h2>
-        <p className="trans__sub">Meet Lola. It's 2030.</p>
+        <p className="trans__sub">08:42 — your weekend just started</p>
       </motion.div>
     </section>
   )

@@ -1,6 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion'
+import { createPortal } from 'react-dom'
+import { useLenis } from 'lenis/react'
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView } from 'framer-motion'
 import { Bot } from 'lucide-react'
+import AgentNotificationCard from './AgentNotificationCard'
 
 // Photos
 import lolaWindow from '../assets/story/photos/lola-window.jpg'
@@ -8,31 +11,34 @@ import surferBeach from '../assets/story/photos/surfer-beach.jpg'
 import lolaPhone from '../assets/story/photos/lola-phone.jpg'
 import lolaSurfsuit from '../assets/story/photos/lola-surfsuit.jpg'
 import surferSitting from '../assets/story/photos/surfer-sitting.jpeg'
+import carteIsometrique from '../assets/story/photos/carte-isometrique-2.png'
+import ticketsSvg from '../assets/story/photos/tickets.svg'
+import costalHotelCardSvg from '../assets/story/photos/costal-hotel-card.svg'
+import mapPinSvg from '../assets/story/icons/map-pin.svg'
 
 // Videos
 import videoSurf from '../assets/story/videos/video-surf.gif'
 import hotelTour from '../assets/story/videos/hotel-tour.gif'
 
-// Icons
-import iconCocktail from '../assets/story/icons/cocktail.png'
-import iconRental from '../assets/story/icons/rental.png'
-import iconPlaces from '../assets/story/icons/places.png'
-import iconFood from '../assets/story/icons/food-bowl.png'
 
 /* ============================
    SCREEN DATA
    ============================ */
 
-const SCREENS = [
-  { id: 'intro', type: 'intro', bg: '#000000' },
-  { id: 'spark', type: 'spark', bg: '#0d1f33' },
-  { id: 'messages', type: 'messages', bg: '#f5f5f0' },
-  { id: 'agent-relay', type: 'agent-relay', bg: '#f0ebe3' },
-  { id: 'booking-wins', type: 'booking-wins', bg: '#ffffff' },
-  { id: 'travel-planning', type: 'travel-planning', bg: '#f8f7f4' },
-  { id: 'local-discovery', type: 'local-discovery', bg: '#f5f0eb' },
-  { id: 'surf-suit', type: 'surf-suit', bg: '#1a1545' },
+const SCREENS_BEFORE_TRAVEL = [
+  { id: 'intro', type: 'intro', bg: '#000000', label: 'No Plan', context: 'Three months before summer', theme: 'dark' },
+  { id: 'spark', type: 'spark', bg: '#0d1f33', label: 'Feed', context: 'Surfing influencer in Lanzarote', theme: 'dark' },
+  { id: 'messages', type: 'messages', bg: '#ffffff', label: 'Chat', context: 'Sharing Lanzarote with a friend', theme: 'light' },
+  { id: 'agent-relay', type: 'agent-relay', bg: '#f0ebe3', label: 'Relay', context: 'Agent relays to other agents', theme: 'light' },
+  { id: 'booking-wins', type: 'booking-wins', bg: '#ffffff', label: 'Booking', context: 'Booking.com wins the bid', theme: 'light' },
 ]
+
+const SCREENS_AFTER_TRAVEL = [
+  { id: 'local-discovery', type: 'local-discovery', bg: '#f5f0eb', label: 'Personalized itinary', context: 'Lanzarote Tourist Office', theme: 'light' },
+  { id: 'surf-suit', type: 'surf-suit', bg: '#1a1545', label: 'Surf Suit', context: 'Decathlon surf suit match', theme: 'dark' },
+]
+
+const SCREENS = [...SCREENS_BEFORE_TRAVEL, { id: 'travel-planning', type: 'travel-planning', bg: '#f8f7f4', label: 'Itinerary', context: 'Full travel package built', theme: 'light' }, ...SCREENS_AFTER_TRAVEL]
 
 /* ============================
    CHAT MESSAGES COMPONENT
@@ -75,6 +81,7 @@ function ChatBubble({ message, isVisible }) {
 function ChatScreen() {
   const [visibleMessages, setVisibleMessages] = useState([])
   const [typing, setTyping] = useState(false)
+  const [showAgent, setShowAgent] = useState(false)
   const [cycle, setCycle] = useState(0)
   const ref = useRef(null)
   const inView = useInView(ref, { amount: 0.5 })
@@ -83,11 +90,13 @@ function ChatScreen() {
     if (!inView) {
       setVisibleMessages([])
       setTyping(false)
+      setShowAgent(false)
       return
     }
 
     setVisibleMessages([])
     setTyping(false)
+    setShowAgent(false)
     const timeouts = []
 
     CHAT_MESSAGES.forEach((msg) => {
@@ -106,11 +115,18 @@ function ChatScreen() {
       timeouts.push(t)
     })
 
+    // Agent notification slides in ~1.5s after the last chat message
+    const agentTimeout = setTimeout(() => {
+      setShowAgent(true)
+    }, 5000)
+    timeouts.push(agentTimeout)
+
     const resetTimeout = setTimeout(() => {
       setVisibleMessages([])
       setTyping(false)
+      setShowAgent(false)
       setCycle((c) => c + 1)
-    }, 6000)
+    }, 10500)
     timeouts.push(resetTimeout)
 
     return () => timeouts.forEach(clearTimeout)
@@ -121,7 +137,27 @@ function ChatScreen() {
 
   return (
     <div ref={ref} className="story-chat">
-      <div className="story-chat__window">
+      <AnimatePresence mode="popLayout">
+        {showAgent && (
+          <AgentNotificationCard
+            key="agent-notif"
+            className="agent-notification-card--chat"
+            title="Find a surf trip for this summer"
+            time="now"
+            description={
+              <>
+                3 options found. Best match: <strong>Lanzarote</strong> &mdash;{' '}
+                <strong>&euro;420</strong>, conditions optimal. Want me to handle everything?
+              </>
+            }
+          />
+        )}
+      </AnimatePresence>
+      <motion.div
+        layout="position"
+        transition={{ type: 'spring', stiffness: 220, damping: 30 }}
+        className="story-chat__window"
+      >
         {CHAT_MESSAGES.map((msg) => {
           const isVisible = visibleMessages.includes(msg.id)
           // Show typing in place of the next received message about to appear
@@ -136,178 +172,30 @@ function ChatScreen() {
             />
           )
         })}
-      </div>
-    </div>
-  )
-}
-
-/* ============================
-   VALIDATE OVERLAY COMPONENT (looping click animation)
-   ============================ */
-
-function ValidateOverlay() {
-  const ref = useRef(null)
-  const inView = useInView(ref, { amount: 0.5 })
-  const [phase, setPhase] = useState('idle') // idle → press → validated → fade → idle
-  const [cycle, setCycle] = useState(0)
-
-  useEffect(() => {
-    if (!inView) {
-      setPhase('idle')
-      return
-    }
-
-    const timers = []
-
-    // 1. Show cursor approaching (idle state lasts 1.5s)
-    setPhase('idle')
-
-    // 2. Press the button
-    timers.push(setTimeout(() => setPhase('press'), 1800))
-
-    // 3. Button validates
-    timers.push(setTimeout(() => setPhase('validated'), 2100))
-
-    // 4. Hold validated state
-    timers.push(setTimeout(() => setPhase('fade'), 4600))
-
-    // 5. Reset and loop
-    timers.push(setTimeout(() => {
-      setPhase('idle')
-      setCycle((c) => c + 1)
-    }, 5600))
-
-    return () => timers.forEach(clearTimeout)
-  }, [inView, cycle])
-
-  const isValidated = phase === 'validated' || phase === 'fade'
-  const isFading = phase === 'fade'
-
-  return (
-    <div ref={ref} className="story-validate-overlay">
-      <motion.div
-        className="story-validate-overlay__card"
-        animate={{
-          opacity: isFading ? 0 : 1,
-        }}
-        transition={{
-          opacity: { duration: isFading ? 0.9 : 0.4, ease: 'easeInOut' },
-        }}
-      >
-        <motion.div
-          className={`story-validate-overlay__btn ${isValidated ? 'story-validate-overlay__btn--done' : ''}`}
-          animate={{
-            scale: phase === 'press' ? 0.9 : phase === 'validated' ? [1, 1.08, 1] : 1,
-          }}
-          transition={
-            phase === 'press'
-              ? { type: 'spring', stiffness: 500, damping: 15 }
-              : { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }
-          }
-        >
-          <span className="story-validate-overlay__check">
-            {isValidated ? '✓' : ''}
-          </span>
-          {isValidated ? 'Journey Approved' : 'Approve Journey'}
-        </motion.div>
-
-        {/* Animated cursor */}
-        <motion.div
-          className="story-validate-overlay__cursor"
-          animate={{
-            opacity: phase === 'idle' || phase === 'press' ? 1 : 0,
-            x: phase === 'idle' ? [24, 0] : 0,
-            y: phase === 'idle' ? [18, 0] : 0,
-            scale: phase === 'press' ? 0.8 : 1,
-          }}
-          transition={{
-            opacity: { duration: 0.25 },
-            x: { duration: 1.4, ease: [0.25, 0.1, 0.25, 1] },
-            y: { duration: 1.4, ease: [0.25, 0.1, 0.25, 1] },
-            scale: { duration: 0.12, ease: 'easeIn' },
-          }}
-        >
-          <svg width="20" height="24" viewBox="0 0 18 22" fill="none">
-            <path d="M1 1L1 15.5L5.5 11.5L9.5 19.5L12.5 18L8.5 10H14.5L1 1Z" fill="white" stroke="#333" strokeWidth="1.5" strokeLinejoin="round" />
-          </svg>
-        </motion.div>
       </motion.div>
     </div>
   )
 }
 
 /* ============================
-   MINI TRAVEL WEBSITE COMPONENT
+   TRAVEL PACKAGE COMPONENT
    ============================ */
 
-function MiniTravelWebsite() {
+function TravelPackage({ ticketStyle, hotelStyle }) {
   return (
-    <div className="mini-travel">
-      {/* Header */}
-      <div className="mini-travel__header">
-        <div className="mini-travel__header-dot" />
-        <div className="mini-travel__header-dot" />
-        <div className="mini-travel__header-dot" />
-        <span className="mini-travel__header-url">lola-travel.companion.ai</span>
-      </div>
-
-      {/* Hero banner */}
-      <div className="mini-travel__hero">
-        <span className="mini-travel__hero-tag">Summer 2030</span>
-        <h4 className="mini-travel__hero-title">Lanzarote</h4>
-        <p className="mini-travel__hero-dates">Jul 12 — Jul 26 &middot; 2 travelers</p>
-      </div>
-
-      {/* Flight card */}
-      <div className="mini-travel__card">
-        <div className="mini-travel__card-icon">✈</div>
-        <div className="mini-travel__card-info">
-          <span className="mini-travel__card-label">Flight</span>
-          <span className="mini-travel__card-value">Paris CDG → Lanzarote ACE</span>
-          <span className="mini-travel__card-detail">Jul 12, 08:30 &middot; Direct &middot; 4h15</span>
-        </div>
-        <div className="mini-travel__card-price">&euro;186</div>
-      </div>
-
-      {/* Hotel card */}
-      <div className="mini-travel__card">
-        <div className="mini-travel__card-icon">🏨</div>
-        <div className="mini-travel__card-info">
-          <span className="mini-travel__card-label">Hotel</span>
-          <span className="mini-travel__card-value">Casa del Sol Boutique</span>
-          <span className="mini-travel__card-detail">14 nights &middot; Ocean view &middot; Breakfast incl.</span>
-        </div>
-        <div className="mini-travel__card-price">&euro;1,240</div>
-      </div>
-
-      {/* Activities */}
-      <div className="mini-travel__section">
-        <span className="mini-travel__section-title">Activities</span>
-        <div className="mini-travel__activities">
-          <div className="mini-travel__activity">
-            <span className="mini-travel__activity-emoji">🏄‍♀️</span>
-            <span>Surf Camp</span>
-          </div>
-          <div className="mini-travel__activity">
-            <span className="mini-travel__activity-emoji">🌋</span>
-            <span>Volcano Hike</span>
-          </div>
-          <div className="mini-travel__activity">
-            <span className="mini-travel__activity-emoji">🍽</span>
-            <span>Food Tour</span>
-          </div>
-          <div className="mini-travel__activity">
-            <span className="mini-travel__activity-emoji">🚗</span>
-            <span>Car Rental</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Total */}
-      <div className="mini-travel__total">
-        <span>Total estimated</span>
-        <span className="mini-travel__total-price">&euro;1,892</span>
-      </div>
+    <div className="travel-package">
+      <motion.img
+        className="travel-package__ticket"
+        src={ticketsSvg}
+        alt="Flight ticket — Paris CDG to Lanzarote ACE"
+        style={ticketStyle}
+      />
+      <motion.img
+        className="travel-package__hotel"
+        src={costalHotelCardSvg}
+        alt="Costal Hotel — Lanzarote"
+        style={hotelStyle}
+      />
     </div>
   )
 }
@@ -342,16 +230,21 @@ const BRANDS = [
 function ScreenIntro() {
   return (
     <div className="story-screen__layout story-screen__layout--intro">
-      <div className="story-intro__content">
-        <motion.h3
-          className="story-intro__title"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6 }}
-        >
-          Three months before summer vacation, Lola still doesn&rsquo;t know where to go on holiday.
-        </motion.h3>
+      <motion.h2
+        className="story-intro__title"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false }}
+        transition={{ duration: 0.8 }}
+      >
+        Three months before summer vacation, Lola still doesn&rsquo;t know where to go.
+      </motion.h2>
+
+      <div className="story-intro__icons">
+        <div className="story-intro__icon-slot" />
+        <div className="story-intro__icon-slot" />
+        <div className="story-intro__icon-slot" />
+        <div className="story-intro__icon-slot" />
       </div>
     </div>
   )
@@ -447,17 +340,8 @@ function ScreenAgentRelay() {
         viewport={{ once: false }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
-        Her personal agent relays informations to other agents.
+        As soon as she shows interest - I will relaying her informations to other agents to bid on her trip
       </motion.h3>
-      <motion.p
-        className="story-relay__sub"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: false }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-      >
-        Behind the scenes, agents start bidding and making choices with her personal context and rules to decide what she&rsquo;ll be exposed to.
-      </motion.p>
     </div>
   )
 }
@@ -513,43 +397,129 @@ function ScreenBookingWins() {
 }
 
 function ScreenTravelPlanning() {
+  const sectionRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  })
+
+  // Ticket — enters from below-left with rotation
+  const ticketYRaw = useTransform(scrollYProgress, [0.05, 0.5], [420, 0])
+  const ticketRotateRaw = useTransform(scrollYProgress, [0.05, 0.5], [-16, -4])
+  const ticketY = useSpring(ticketYRaw, { stiffness: 110, damping: 24 })
+  const ticketRotate = useSpring(ticketRotateRaw, { stiffness: 110, damping: 24 })
+
+  // Hotel card — enters slightly later from below-right
+  const hotelYRaw = useTransform(scrollYProgress, [0.12, 0.58], [520, 0])
+  const hotelRotateRaw = useTransform(scrollYProgress, [0.12, 0.58], [18, 3])
+  const hotelY = useSpring(hotelYRaw, { stiffness: 110, damping: 24 })
+  const hotelRotate = useSpring(hotelRotateRaw, { stiffness: 110, damping: 24 })
+
+  // Agent notification — fades in only after ticket + hotel have landed
+  const notifOpacityRaw = useTransform(scrollYProgress, [0.62, 0.75], [0, 1])
+  const notifYRaw = useTransform(scrollYProgress, [0.62, 0.75], [-24, 0])
+  const notifScaleRaw = useTransform(scrollYProgress, [0.62, 0.75], [0.96, 1])
+  const notifOpacity = useSpring(notifOpacityRaw, { stiffness: 140, damping: 24 })
+  const notifY = useSpring(notifYRaw, { stiffness: 140, damping: 24 })
+  const notifScale = useSpring(notifScaleRaw, { stiffness: 140, damping: 24 })
+
   return (
-    <div className="story-screen__layout story-screen__layout--travel">
-      <div className="story-travel__content">
-        <motion.h3
-          className="story-travel__title"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6 }}
-        >
-          Her companion has built her itinerary within a travel package. She approves, and the companion handle everything.
-        </motion.h3>
+    <section ref={sectionRef} className="story-travel-section" style={{ background: '#ffffff' }} data-story-id="travel-planning">
+      <div className="story-travel-sticky">
+        {/* Title + checkmarks */}
+        <div className="story-travel__text-block">
+          <motion.h3
+            className="story-travel__title"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.1 }}
+            transition={{ duration: 0.7 }}
+          >
+            Your trip is ready, you saved 18% compare to average price
+          </motion.h3>
+          <motion.div
+            className="story-travel__checks"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <span className="story-travel__check">
+              <span className="story-travel__check-mark">✓</span> Flights booked
+            </span>
+            <span className="story-travel__check">
+              <span className="story-travel__check-mark">✓</span> Hotel reserved
+            </span>
+          </motion.div>
+        </div>
+
+        {/* Travel package — ticket + hotel card rise into place on scroll */}
+        <div className="story-travel__preview">
+          <TravelPackage
+            ticketStyle={{ y: ticketY, rotate: ticketRotate }}
+            hotelStyle={{ y: hotelY, rotate: hotelRotate }}
+          />
+        </div>
+
+        {/* Agent notification — appears after the flight + hotel visuals. */}
+        <AgentNotificationCard
+          className="agent-notification-card--travel"
+          controlled
+          style={{ opacity: notifOpacity, y: notifY, scale: notifScale }}
+          title="Found the best flight and the best hotel for you"
+          description="Should I book it?"
+          time="just now"
+        />
       </div>
-      <div className="story-travel__visual">
-        <motion.div
-          className="story-travel__app-wrapper"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-        >
-          <MiniTravelWebsite />
-          <ValidateOverlay />
-        </motion.div>
+    </section>
+  )
+}
+
+const DISCOVERY_PINS = [
+  { id: 'rentals', label: 'Rentals', x: '28%', y: '52%' },
+  { id: 'shop', label: 'Shop', x: '55%', y: '58%' },
+  { id: 'food', label: 'Restaurants', x: '72%', y: '66%' },
+  { id: 'bars', label: 'Bars', x: '42%', y: '82%' },
+]
+
+function MapPin({ pin, index }) {
+  return (
+    <motion.div
+      className="story-discovery__pin"
+      style={{ left: pin.x, top: pin.y }}
+      initial={{ opacity: 0, y: -90, scale: 0.3 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: false, amount: 0.3 }}
+      transition={{
+        type: 'spring',
+        stiffness: 280,
+        damping: 16,
+        delay: 0.5 + index * 0.3,
+      }}
+    >
+      <img src={mapPinSvg} alt="" className="story-discovery__pin-shape" />
+      <span className="story-discovery__pin-label">{pin.label}</span>
+    </motion.div>
+  )
+}
+
+function LocalDiscoveryBackground() {
+  return (
+    <div className="story-discovery__map-wrap" aria-hidden="true">
+      <div
+        className="story-discovery__map"
+        style={{ backgroundImage: `url(${carteIsometrique})` }}
+      />
+      <div className="story-discovery__pins">
+        {DISCOVERY_PINS.map((pin, i) => (
+          <MapPin key={pin.id} pin={pin} index={i} />
+        ))}
       </div>
     </div>
   )
 }
 
 function ScreenLocalDiscovery() {
-  const discoveryItems = [
-    { src: iconRental, alt: 'Beach & rentals', label: 'Rentals', className: 'story-discovery__item--surf' },
-    { src: iconPlaces, alt: 'Market & shops', label: 'Shop', className: 'story-discovery__item--places' },
-    { src: iconFood, alt: 'Vegetarian food', label: 'Restaurants', className: 'story-discovery__item--food' },
-    { src: iconCocktail, alt: 'Cocktails & bars', label: 'Bars', className: 'story-discovery__item--cocktail' },
-  ]
-
   return (
     <div className="story-screen__layout story-screen__layout--discovery">
       <div className="story-discovery__narrative">
@@ -560,26 +530,17 @@ function ScreenLocalDiscovery() {
           viewport={{ once: false }}
           transition={{ duration: 0.7 }}
         >
-          In parallel Lanzarote Tourist Office wins the bidding and provides the best trip activities.
+          I&rsquo;ve updated your itinerary with the best options
         </motion.h3>
-      </div>
-
-      <div className="story-discovery__scatter">
-        {discoveryItems.map((item, i) => (
-          <motion.div
-            key={item.label}
-            className={`story-discovery__item ${item.className}`}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.5, delay: 0.15 + i * 0.1 }}
-          >
-            <div className="story-discovery__item-img">
-              <img src={item.src} alt={item.alt} />
-            </div>
-            <span className="story-discovery__item-label">{item.label}</span>
-          </motion.div>
-        ))}
+        <motion.p
+          className="story-discovery__subtitle"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          Lanzarote Tourist Office, Get your Guide, Booking provided those informations
+        </motion.p>
       </div>
     </div>
   )
@@ -588,33 +549,27 @@ function ScreenLocalDiscovery() {
 function ScreenSurfSuit() {
   return (
     <div className="story-screen__layout story-screen__layout--suit">
-      <div className="story-suit__content">
-        <motion.h3
-          className="story-suit__title"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6 }}
-        >
-          Her Companion knows she&rsquo;s missing a surf suit. He finds the best one using her personal context &mdash; allergies, materials, past injuries.
-        </motion.h3>
-        <motion.p
-          className="story-suit__companion"
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Bot size={12} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
-          Retrieves the virtual asset of the surf suit and finds the best deal. Displays organic and sponsored products.
-        </motion.p>
-      </div>
+      <AgentNotificationCard
+        className="agent-notification-card--suit"
+        title="You’ll need a wetsuit"
+        description={(
+          <>
+            Selected for you: Size: M
+            <br />
+            Based on past purchases and compatible with your allergies
+            <br />
+            Let&rsquo;s see what it could look like on your AI avatar
+          </>
+        )}
+        time="just now"
+      />
+      <div className="story-suit__content" />
       <motion.div
         className="story-suit__visual"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false }}
-        transition={{ duration: 0.7, delay: 0.2 }}
+        transition={{ duration: 0.7, delay: 2 }}
       >
         <div className="story-suit__brand">
           <img src={logoDecathlon} alt="Decathlon" className="story-suit__brand-logo" />
@@ -633,27 +588,73 @@ const SCREEN_RENDERERS = {
   'messages': ScreenMessages,
   'agent-relay': ScreenAgentRelay,
   'booking-wins': ScreenBookingWins,
-  'travel-planning': ScreenTravelPlanning,
   'local-discovery': ScreenLocalDiscovery,
   'surf-suit': ScreenSurfSuit,
 }
 
 function ArrivalSection() {
   const total = SCREENS.length + 1
+  const ref = useRef(null)
+  const inView = useInView(ref, { amount: 0.5 })
+  const [showNotif1, setShowNotif1] = useState(false)
+  const [showNotif2, setShowNotif2] = useState(false)
+
+  useEffect(() => {
+    if (!inView) {
+      setShowNotif1(false)
+      setShowNotif2(false)
+      return
+    }
+    const t1 = setTimeout(() => setShowNotif1(true), 1000)
+    const t2 = setTimeout(() => setShowNotif2(true), 3000)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [inView])
+
   return (
-    <section className="arrival story-screen--dark" data-lenis-snap>
-      <img className="arrival__bg" src={surferBeach} alt="" />
+    <section ref={ref} className="arrival story-screen--dark" data-story-id="arrival" data-lenis-snap>
       <div className="arrival__content">
-        <motion.h3
+        <motion.h2
           className="arrival__title"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 0.8 }}
         >
-          She arrives in Lanzarote.<br />
-          She can&rsquo;t wait to start the surf camp and explore the island.
-        </motion.h3>
+          Welcome to Lanzarote
+        </motion.h2>
+        <div className="arrival__notifs">
+          <AnimatePresence>
+            {showNotif1 && (
+              <AgentNotificationCard
+                key="arrival-notif-1"
+                className="agent-notification-card--arrival"
+                title="Your agent booked a surf session for Saturday."
+                time="just now"
+                description={(
+                  <>
+                    Reason:
+                    <br />
+                    – Weather window optimal
+                    <br />
+                    – Price dropped 12%
+                  </>
+                )}
+              />
+            )}
+            {showNotif2 && (
+              <AgentNotificationCard
+                key="arrival-notif-2"
+                className="agent-notification-card--arrival"
+                title="Next"
+                time="in 1h20"
+                description="Your surf session starts in 1h20"
+              />
+            )}
+          </AnimatePresence>
+        </div>
       </div>
       <div className="story-screen__num">
         {String(total).padStart(2, '0')} / {String(total).padStart(2, '0')}
@@ -668,45 +669,28 @@ function ArrivalSection() {
 
 function StoryScreen({ screen, index, total }) {
   const ref = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  })
-
-  const y = useTransform(scrollYProgress, [0, 1], [60, -60])
-  const smoothY = useSpring(y, { stiffness: 200, damping: 30 })
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [1.02, 1, 1, 0.98])
-
   const Renderer = SCREEN_RENDERERS[screen.type]
   const isDark = ['intro', 'spark'].includes(screen.type)
 
   return (
-    <motion.section
+    <section
       ref={ref}
       className={`story-screen ${isDark ? 'story-screen--dark' : 'story-screen--light'}`}
       style={{ background: screen.bg }}
+      data-story-id={screen.id}
       data-lenis-snap
     >
-      {/* Rendered at section level — outside parallax inner */}
-      {screen.type === 'intro' && (
-        <div className="story-intro__photo">
-          <img src={lolaWindow} alt="" />
-        </div>
-      )}
       {screen.type === 'agent-relay' && <AgentRelayLogos />}
+      {screen.type === 'local-discovery' && <LocalDiscoveryBackground />}
 
-      <motion.div
-        className="story-screen__inner"
-        style={{ y: smoothY, opacity, scale }}
-      >
+      <div className="story-screen__inner">
         {Renderer && <Renderer />}
-      </motion.div>
+      </div>
 
       <div className="story-screen__num">
         {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
       </div>
-    </motion.section>
+    </section>
   )
 }
 
@@ -714,24 +698,215 @@ function StoryScreen({ screen, index, total }) {
    END CARD
    ============================ */
 
-function EndCard() {
+const ENDCARD_PARAGRAPHS = [
+  'From the TikTok video to Lanzarote, Lola interacted with many ad formats, and was targeted by several advertisers.',
+  'All this without even feeling advertised to. She never felt “advertised to.”',
+  'Everything just… happened.',
+  'No banners. No clicks. No decisions.',
+]
+
+function EndCardWord({ word, range, progress }) {
+  const opacity = useTransform(progress, range, [0.15, 1])
   return (
-    <section className="fs-endcard" data-lenis-snap>
-      <motion.div
-        className="fs-endcard__inner"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.2 }}
-      >
-        <h2 className="fs-endcard__title">
-          She never felt &ldquo;advertised&nbsp;to.&rdquo;
-        </h2>
-        <p className="fs-endcard__body">
-          The advertising was invisible &mdash; but it powered the entire experience.
-        </p>
-      </motion.div>
+    <motion.span className="sr-word" style={{ opacity }}>
+      {word}
+    </motion.span>
+  )
+}
+
+function EndCardParagraph({ text, startProgress, endProgress, progress }) {
+  const words = text.split(' ')
+  const range = endProgress - startProgress
+  return (
+    <p className="sr-para">
+      {words.map((word, i) => {
+        const wordStart = startProgress + (i / words.length) * range
+        const wordEnd = startProgress + ((i + 1) / words.length) * range
+        return (
+          <EndCardWord
+            key={i}
+            word={word}
+            range={[wordStart, wordEnd]}
+            progress={progress}
+          />
+        )
+      })}
+    </p>
+  )
+}
+
+function EndCard() {
+  const containerRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  })
+
+  const total = ENDCARD_PARAGRAPHS.length
+  const slices = ENDCARD_PARAGRAPHS.map((_, i) => {
+    const start = (i / total) * 0.85
+    const end = ((i + 1) / total) * 0.85
+    return [start, end]
+  })
+
+  return (
+    <section ref={containerRef} className="sr" data-story-id="endcard">
+      <div className="sr__sticky">
+        <div className="sr__content">
+          {ENDCARD_PARAGRAPHS.map((text, i) => (
+            <EndCardParagraph
+              key={i}
+              text={text}
+              startProgress={slices[i][0]}
+              endProgress={slices[i][1]}
+              progress={scrollYProgress}
+            />
+          ))}
+        </div>
+      </div>
     </section>
+  )
+}
+
+/* ============================
+   STRUCTURAL CARD (final)
+   ============================ */
+
+function StructuralCard() {
+  return (
+    <section className="structural" data-story-id="structural">
+      <div className="structural__inner">
+        <h2 className="structural__title">
+          Advertising didn&rsquo;t disappear.
+          <br />
+          It became structural.
+        </h2>
+
+        <p className="structural__line">
+          From a single video&hellip; <strong>6 formats activated</strong> and multiple signals captured &hellip;to a full trip.
+        </p>
+
+        <p className="structural__kicker">
+          All of it orchestrated by a trusted agent.
+        </p>
+      </div>
+    </section>
+  )
+}
+
+/* ============================
+   STORY TIMELINE
+   ============================ */
+
+const TIMELINE_STEPS = [
+  ...SCREENS.map((s) => ({ id: s.id, label: s.label, context: s.context, theme: s.theme })),
+  { id: 'arrival', label: 'Arrival', context: 'She arrives in Lanzarote', theme: 'dark' },
+]
+
+function StoryTimeline() {
+  const [activeId, setActiveId] = useState(null)
+  const [visible, setVisible] = useState(false)
+  const ref = useRef(null)
+  const lenis = useLenis()
+
+  useEffect(() => {
+    const storyIds = TIMELINE_STEPS.map((s) => s.id)
+    let cachedSections = null
+    const getSections = () => {
+      if (!cachedSections) {
+        cachedSections = []
+        storyIds.forEach((id) => {
+          const el = document.querySelector(`[data-story-id="${id}"]`)
+          if (el) cachedSections.push(el)
+        })
+      }
+      return cachedSections
+    }
+
+    let rafId
+    const loop = () => {
+      const sections = getSections()
+      if (sections.length) {
+        const vh = window.innerHeight
+        let best = null
+        let bestScore = -1
+        let anyVisible = false
+
+        for (let i = 0; i < sections.length; i++) {
+          const rect = sections[i].getBoundingClientRect()
+          const visTop = Math.max(rect.top, 0)
+          const visBot = Math.min(rect.bottom, vh)
+          const coverage = Math.max(0, visBot - visTop) / vh
+
+          if (coverage > 0) {
+            anyVisible = true
+            // Section qui entre par le bas (top > 0) : boost x3
+            // pour basculer dès ~25% de visibilité
+            const score = rect.top > 0 ? coverage * 3 : coverage
+            if (score > bestScore) {
+              bestScore = score
+              best = sections[i]
+            }
+          }
+        }
+
+        setVisible(anyVisible)
+        if (best) setActiveId(best.dataset.storyId)
+      }
+
+      rafId = requestAnimationFrame(loop)
+    }
+
+    rafId = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+
+  const activeIndex = TIMELINE_STEPS.findIndex((s) => s.id === activeId)
+  const activeTheme = TIMELINE_STEPS[activeIndex]?.theme ?? 'dark'
+
+  return createPortal(
+    <nav
+      ref={ref}
+      className={`story-timeline story-timeline--${activeTheme}`}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(-20px)',
+        transition: 'opacity 0.4s ease, transform 0.4s ease',
+      }}
+    >
+      <div className="story-timeline__pill">
+        <div className="story-timeline__steps">
+          {TIMELINE_STEPS.map((step, i) => {
+            const isPast = i < activeIndex
+            const isActive = i === activeIndex
+
+            return (
+              <button
+                key={step.id}
+                className={`story-timeline__step ${isActive ? 'story-timeline__step--active' : ''} ${isPast ? 'story-timeline__step--past' : ''}`}
+                onClick={() => {
+                  const el = document.querySelector(`[data-story-id="${step.id}"]`)
+                  if (!el) return
+                  if (lenis) {
+                    lenis.scrollTo(el, { duration: 1.2, easing: (t) => 1 - Math.pow(1 - t, 4) })
+                  } else {
+                    el.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
+              >
+                <span className="story-timeline__dot" />
+                <span className="story-timeline__label">{step.label}</span>
+                <span className="story-timeline__tooltip">
+                  <span className="story-timeline__tooltip-prefix">I can jump you back to:</span>
+                  <span className="story-timeline__tooltip-value">{step.context}</span>
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </nav>,
+    document.body
   )
 }
 
@@ -740,19 +915,35 @@ function EndCard() {
    ============================ */
 
 export default function LolaCarousel() {
+  const totalScreens = SCREENS.length
+
   return (
     <>
-      {SCREENS.map((screen, i) => (
+      <StoryTimeline />
+
+      {SCREENS_BEFORE_TRAVEL.map((screen, i) => (
         <StoryScreen
           key={screen.id}
           screen={screen}
           index={i}
-          total={SCREENS.length}
+          total={totalScreens}
+        />
+      ))}
+
+      <ScreenTravelPlanning />
+
+      {SCREENS_AFTER_TRAVEL.map((screen, i) => (
+        <StoryScreen
+          key={screen.id}
+          screen={screen}
+          index={SCREENS_BEFORE_TRAVEL.length + 1 + i}
+          total={totalScreens}
         />
       ))}
 
       <ArrivalSection />
       <EndCard />
+      <StructuralCard />
     </>
   )
 }

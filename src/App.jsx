@@ -21,10 +21,14 @@ function SnapSetup() {
 
     const snap = new Snap(lenis, {
       type: 'proximity',
-      lerp: 0.035,
+      lerp: 0.08,
       easing: (t) => 1 - Math.pow(1 - t, 4),
-      duration: 1.5,
-      debounce: 200,
+      duration: 1.1,
+      // Only pull the user to a snap point if they stopped within 40% of a viewport.
+      // This keeps the 280vh travel-planning section and the tall scroll-reveal
+      // section free of snap interference while still nudging 100vh slides into place.
+      distanceThreshold: '40%',
+      debounce: 350,
     })
     snapRef.current = snap
 

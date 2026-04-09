@@ -477,10 +477,11 @@
 }
 
 .trans__sub {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-family: var(--sans);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
   color: var(--neutral-6);
 }
 
@@ -544,7 +545,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: calc(var(--spacer) * 8) calc(var(--spacer) * 6);
-  will-change: transform, opacity;
 }
 
 .story-screen__num {
@@ -566,52 +566,37 @@
    SCREEN 1 — INTRO (fullscreen image)
    ============================================= */
 
-/* Let the intro break out of the constrained inner container */
-.story-screen:has(.story-screen__layout--intro) .story-screen__inner {
-  max-width: none;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
-
 .story-screen__layout--intro {
-  position: relative;
-  width: 100%;
-  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-}
-
-.story-intro__photo {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.story-intro__photo img {
+  justify-content: center;
+  text-align: center;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.story-intro__content {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 calc(var(--spacer) * 6);
+  gap: calc(var(--spacer) * 6);
 }
 
 .story-intro__title {
   font-family: var(--sans);
-  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: #ffffff;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6), 0 0 50px rgba(0, 0, 0, 0.5), 0 0 100px rgba(0, 0, 0, 0.3);
-  max-width: 520px;
+  max-width: 800px;
+}
+
+.story-intro__icons {
+  display: flex;
+  gap: calc(var(--spacer) * 4);
+}
+
+.story-intro__icon-slot {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.25);
 }
 
 /* =============================================
@@ -686,6 +671,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: calc(var(--spacer) * 4);
 }
 
 .story-chat__window {
@@ -693,7 +679,100 @@
   display: flex;
   flex-direction: column;
   gap: calc(var(--spacer) * 2);
-  min-height: 320px;
+}
+
+/* --- Agent notification card (reusable, SVG-based) --- */
+.agent-notification-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 520px;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 14px 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    0 2px 6px rgba(15, 23, 42, 0.18),
+    0 12px 28px rgba(15, 23, 42, 0.22),
+    0 30px 60px rgba(15, 23, 42, 0.18);
+  flex-shrink: 0;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.agent-notification-card__bg {
+  display: none;
+}
+
+.agent-notification-card__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.agent-notification-card__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  color: #1d1d1d;
+}
+
+.agent-notification-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.agent-notification-card__title {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  color: #1d1d1d;
+}
+
+.agent-notification-card__time {
+  font-size: 13px;
+  line-height: 1.3;
+  color: rgba(29, 29, 29, 0.55);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.agent-notification-card__desc {
+  font-size: 15px;
+  line-height: 1.3;
+  color: #1d1d1d;
+}
+
+/* Placement variants — all centered horizontally via auto margins */
+.agent-notification-card--chat {
+  margin: calc(var(--spacer) * 4) auto calc(var(--spacer) * 4);
+  align-self: center;
+}
+
+.agent-notification-card--travel {
+  margin: calc(var(--spacer) * 6) auto 0;
+  align-self: center;
+}
+
+.agent-notification-card--suit {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--spacer) * 6);
+  transform: translateY(-50%);
+  margin: 0;
+  z-index: 4;
+  grid-column: 1 / -1;
 }
 
 .story-chat__bubble {
@@ -882,303 +961,170 @@
    SCREEN 6 — TRAVEL PLANNING
    ============================================= */
 
-.story-screen__layout--travel {
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: calc(var(--spacer) * 4);
-  align-items: center;
-  width: 100%;
-  height: 100%;
+/* Tall scrollable section — owns its own sticky container */
+.story-travel-section {
+  position: relative;
+  height: 280vh;
 }
 
-.story-travel__content {
-  max-width: 640px;
+.story-travel-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  padding: calc(var(--spacer) * 6) calc(var(--spacer) * 4);
+  gap: clamp(36px, 6vh, 80px);
+}
+
+/* Title + checkmarks */
+.story-travel__text-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacer) * 1.25);
+  text-align: center;
+  max-width: 860px;
+  z-index: 1;
+  flex-shrink: 0;
 }
 
 .story-travel__title {
   font-family: var(--sans);
-  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
   font-weight: 700;
   line-height: 1.2;
   color: var(--neutral-9);
-  margin-bottom: calc(var(--spacer) * 4);
+  text-align: center;
+  max-width: 720px;
+  margin: 0;
 }
 
-.story-travel__sub {
-  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
-  line-height: 1.65;
-  color: var(--neutral-6);
-  margin-bottom: calc(var(--spacer) * 4);
-}
-
-.story-travel__companion {
-  font-size: clamp(0.9rem, 1.2vw, 1.05rem);
-  line-height: 1.65;
-  color: var(--neutral-5);
-  font-style: italic;
-}
-
-.story-travel__visual {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  overflow: visible;
-  margin-right: calc(var(--spacer) * -6);
-}
-
-.story-travel__app-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-}
-
-/* ---- Validate Overlay (Decathlon-style floating badge) ---- */
-.story-validate-overlay {
-  position: absolute;
-  bottom: -20px;
-  right: -28px;
-  z-index: 3;
-}
-
-.story-validate-overlay__card {
-  position: relative;
-}
-
-.story-validate-overlay__btn {
-  font-family: var(--sans);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #ffffff;
-  background: var(--accent-5);
-  border-radius: var(--radius-pill);
-  padding: 14px 32px;
+.story-travel__checks {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: calc(var(--spacer) * 2);
+  flex-wrap: wrap;
+}
+
+.story-travel__check {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-  white-space: nowrap;
-  transition: background 0.35s ease;
-  box-shadow: 0 6px 24px rgba(254, 80, 0, 0.3);
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--neutral-8);
 }
 
-.story-validate-overlay__btn--done {
-  background: #10b981;
-  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.35);
-}
-
-.story-validate-overlay__check {
-  font-size: 1.05rem;
+.story-travel__check-mark {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-9);
   line-height: 1;
 }
 
-.story-validate-overlay__cursor {
-  position: absolute;
-  bottom: 6px;
-  right: 24px;
-  pointer-events: none;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-
-/* ---- Mini Travel Website ---- */
-.mini-travel {
-  background: #ffffff;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card), 0 12px 40px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+/* Travel package — ticket + hotel card visual */
+.story-travel__preview {
+  position: relative;
   width: 100%;
-}
-
-/* Browser-like header bar */
-.mini-travel__header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  background: var(--neutral-1);
-  border-bottom: 1px solid var(--neutral-2);
-}
-
-.mini-travel__header-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--neutral-3);
-}
-
-.mini-travel__header-url {
-  font-family: var(--mono);
-  font-size: 0.55rem;
-  color: var(--neutral-5);
-  margin-left: 8px;
-  letter-spacing: 0.02em;
-}
-
-/* Hero banner */
-.mini-travel__hero {
-  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #14b8a6 100%);
-  padding: 20px 18px 16px;
-  color: #ffffff;
-  text-align: center;
-}
-
-.mini-travel__hero-tag {
-  font-family: var(--mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.8;
-}
-
-.mini-travel__hero-title {
-  font-family: var(--sans);
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 4px 0 2px;
-  letter-spacing: -0.01em;
-}
-
-.mini-travel__hero-dates {
-  font-size: 0.65rem;
-  opacity: 0.85;
-}
-
-/* Cards (flight, hotel) */
-.mini-travel__card {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--neutral-1);
-}
-
-.mini-travel__card-icon {
-  font-size: 1rem;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--neutral-0-5);
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-
-.mini-travel__card-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.mini-travel__card-label {
-  font-family: var(--mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--neutral-5);
-  margin-bottom: 1px;
-}
-
-.mini-travel__card-value {
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--neutral-8);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mini-travel__card-detail {
-  font-size: 0.6rem;
-  color: var(--neutral-5);
-  margin-top: 1px;
-}
-
-.mini-travel__card-price {
-  font-family: var(--sans);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--neutral-8);
-  flex-shrink: 0;
-  margin-top: 6px;
-}
-
-/* Activities section */
-.mini-travel__section {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--neutral-1);
-}
-
-.mini-travel__section-title {
-  font-family: var(--mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--neutral-5);
-  display: block;
-  margin-bottom: 8px;
-}
-
-.mini-travel__activities {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.mini-travel__activity {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--neutral-0-5);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: var(--neutral-7);
-}
-
-.mini-travel__activity-emoji {
-  font-size: 0.8rem;
-}
-
-/* Total bar */
-.mini-travel__total {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  color: var(--neutral-6);
-}
-
-.mini-travel__total-price {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--neutral-9);
+  max-width: 1100px;
+  will-change: transform, opacity;
+  z-index: 2;
+  flex-shrink: 1;
+  min-height: 0;
 }
 
 /* =============================================
-   SCREEN 7 — LOCAL DISCOVERY (editorial scatter)
+   TRAVEL PACKAGE — ticket + hotel card
    ============================================= */
+
+.travel-package {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(40px, 8vw, 140px);
+  width: 100%;
+}
+
+.travel-package__ticket,
+.travel-package__hotel {
+  display: block;
+  width: auto;
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.12))
+          drop-shadow(0 4px 10px rgba(0, 0, 0, 0.05));
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+.travel-package__ticket {
+  height: clamp(260px, 40vh, 420px);
+}
+
+.travel-package__hotel {
+  height: clamp(220px, 34vh, 360px);
+}
+
+/* =============================================
+   SCREEN 7 — LOCAL DISCOVERY (isometric map + glass pins)
+   ============================================= */
+
+/* The narrative lives inside .story-screen__inner with the SAME padding as every
+   other screen — text respects the standard section margins.
+   The inner is vertically centered by .story-screen's align-items: center.
+   The narrative is left-aligned so text sits on the left while the map sits
+   on the right. */
+.story-screen[data-story-id="local-discovery"] .story-screen__inner {
+  position: relative;
+  z-index: 3;
+}
 
 .story-screen__layout--discovery {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 100%;
   position: relative;
   gap: 0;
 }
 
-/* ---- Narrative block (title + subtitle) ---- */
+/* ---- Map wrapper — right-anchored, smaller than fullscreen ---- */
+/* Height constrained to ~64% of viewport; width follows image aspect ratio but
+   capped at 60% of viewport width. Anchored to the right edge with a small
+   bottom margin so the map doesn't touch the screen bottom. */
+.story-discovery__map-wrap {
+  position: absolute;
+  right: 0;
+  bottom: calc(var(--spacer) * 6);
+  height: 64%;
+  width: min(60%, calc(64vh * 2592 / 1682));
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.story-discovery__map {
+  position: absolute;
+  inset: 0;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/* ---- Narrative block — left-anchored, vertically centered with the map ---- */
 .story-discovery__narrative {
+  position: relative;
   width: 100%;
-  max-width: 720px;
-  margin-bottom: calc(var(--spacer) * 6);
+  max-width: 440px;
+  margin: 0;
+  text-align: left;
 }
 
 .story-discovery__title {
@@ -1188,68 +1134,68 @@
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--neutral-9);
-  margin-bottom: calc(var(--spacer) * 2);
+  margin: 0 0 calc(var(--spacer) * 2);
 }
 
-
-/* ---- Scattered items grid ---- */
-.story-discovery__scatter {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto;
-  gap: calc(var(--spacer) * 3);
-  width: 100%;
-  align-items: end;
-}
-
-/* Each discovery item */
-.story-discovery__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: calc(var(--spacer) * 1.5);
-}
-
-.story-discovery__item-img {
-  width: 100%;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  will-change: transform;
-  overflow: hidden;
-}
-
-.story-discovery__item-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.08));
-}
-
-.story-discovery__item-label {
+.story-discovery__subtitle {
   font-family: var(--sans);
-  font-size: clamp(0.85rem, 1.1vw, 1rem);
-  font-weight: 600;
-  color: var(--neutral-7);
-  text-align: center;
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--neutral-6);
+  margin: 0;
 }
 
-/* Per-icon scale to visually equalize sizes */
-.story-discovery__item--surf .story-discovery__item-img img {
-  transform: scale(1.8);
+
+/* ---- Pins layer — same bounds as the map wrap, so pin x/y % map onto image ---- */
+.story-discovery__pins {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
-.story-discovery__item--places .story-discovery__item-img img {
-  transform: scale(1.15);
+/* Pin uses the imported map-pin.svg asset (glassmorphism teardrop with built-in
+   drop shadow). The SVG viewBox is 195x224 with the pin TIP at (67.5, 144),
+   which is 34.6% x, 64.3% y of the viewBox. Those percentages are used below
+   to anchor the tip at the pin's (left, top) position. */
+.story-discovery__pin {
+  position: absolute;
+  width: 120px;
+  /* Anchor: motion.div width matches the img width; tip in img is at
+     (0.346 * 120, 0.643 * 138) ≈ (42, 89). */
+  margin-left: -42px;
+  margin-top: -89px;
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
-.story-discovery__item--food .story-discovery__item-img img {
-  transform: scale(1.6);
+.story-discovery__pin-shape {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
 }
 
-.story-discovery__item--cocktail .story-discovery__item-img img {
-  transform: scale(0.75);
+.story-discovery__pin-label {
+  position: absolute;
+  top: 96px;          /* tip_y (89) + 7px gap */
+  left: 42px;         /* tip_x */
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--neutral-9);
+  white-space: nowrap;
+  box-shadow: 0 8px 18px rgba(80, 50, 140, 0.22);
 }
 
 
@@ -1346,37 +1292,51 @@
   overflow: hidden;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-}
-
-.arrival__bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  z-index: 0;
+  background: #000000;
 }
 
 .arrival__content {
   position: absolute;
   inset: 0;
-  z-index: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: calc(var(--spacer) * 6);
+  gap: calc(var(--spacer) * 4);
+}
+
+.arrival__notifs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--spacer) * 2);
+  width: 100%;
+  max-width: 560px;
+}
+
+.agent-notification-card--arrival {
+  position: relative;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.agent-notification-card--arrival .agent-notification-card__text,
+.agent-notification-card--arrival .agent-notification-card__title,
+.agent-notification-card--arrival .agent-notification-card__desc {
+  text-align: left;
+  align-items: flex-start;
 }
 
 .arrival__title {
   font-family: var(--sans);
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: #ffffff;
-  max-width: 700px;
-  text-shadow: 0 0 40px rgba(0, 0, 0, 0.4), 0 0 80px rgba(0, 0, 0, 0.2);
+  max-width: 800px;
 }
 
 /* =============================================
@@ -1456,6 +1416,196 @@
 }
 
 /* =============================================
+   STORY TIMELINE — fixed top full-width bar
+   ============================================= */
+
+.story-timeline {
+  position: fixed;
+  top: calc(var(--spacer) * 3);
+  left: calc(var(--spacer) * 5);
+  right: calc(var(--spacer) * 5);
+  z-index: 999999;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+/* The glass pill container — full width */
+.story-timeline__pill {
+  display: block;
+  width: 100%;
+  padding: 12px clamp(24px, 3vw, 44px);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
+  transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+/* Dark sections — light glass (default) */
+.story-timeline--dark .story-timeline__pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Light sections — dark glass, stays readable */
+.story-timeline--light .story-timeline__pill {
+  background: rgba(25, 15, 45, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.story-timeline__steps {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+/* Each step — equal flex width, vertical layout (dot above label) */
+.story-timeline__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+}
+
+/* Connecting line between steps */
+.story-timeline__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 3px; /* center of 8px dot minus 1px line */
+  left: calc(50% + 8px);
+  right: calc(-50% + 8px);
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+  transition: background 0.3s ease;
+  z-index: 0;
+}
+
+.story-timeline__step--past:not(:last-child)::after {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Dot */
+.story-timeline__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+  transition: all 0.35s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.story-timeline__step--past .story-timeline__dot {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.story-timeline__step--active .story-timeline__dot {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22);
+}
+
+/* Label — always visible under each dot */
+.story-timeline__label {
+  font-family: var(--sans);
+  font-size: clamp(0.62rem, 0.78vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: rgba(255, 255, 255, 0.65);
+  white-space: nowrap;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.story-timeline__step--past .story-timeline__label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.story-timeline__step--active .story-timeline__label {
+  color: #ffffff;
+}
+
+.story-timeline__step:hover .story-timeline__label {
+  color: #ffffff;
+}
+
+/* Hover tooltip — agent-style context */
+.story-timeline__tooltip {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 16px;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-radius: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.5s ease, border-color 0.5s ease;
+  z-index: 10;
+}
+
+/* Dark sections — light glass tooltip */
+.story-timeline--dark .story-timeline__tooltip {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* Light sections — dark glass tooltip, stays readable */
+.story-timeline--light .story-timeline__tooltip {
+  background: rgba(25, 15, 45, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.story-timeline__tooltip-prefix {
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.story-timeline__tooltip-value {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.story-timeline__step:hover .story-timeline__tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+
+/* =============================================
    MOBILE
    ============================================= */
 
@@ -1486,12 +1636,23 @@
 
   .story-screen__layout--spark,
   .story-screen__layout--booking,
-  .story-screen__layout--travel,
   .story-screen__layout--suit {
     grid-template-columns: 1fr;
     gap: calc(var(--spacer) * 4);
   }
 
+  .story-travel-section { height: 220vh; }
+  .story-travel-sticky { padding: 10vh calc(var(--spacer) * 2) 0; }
+  .story-travel__title { font-size: clamp(1.4rem, 5.5vw, 2rem); }
+  .story-travel__checks { gap: calc(var(--spacer) * 1.25); }
+  .story-travel__check { font-size: 0.95rem; }
+  .travel-package {
+    flex-direction: column;
+    gap: calc(var(--spacer) * 3);
+    padding: calc(var(--spacer) * 1.5) 0;
+  }
+  .travel-package__ticket { height: clamp(240px, 48vh, 340px); }
+  .travel-package__hotel { height: clamp(200px, 34vh, 280px); }
 
   .story-relay__logo-img {
     height: 22px;
@@ -1510,10 +1671,21 @@
 
   .story-booking__visual { height: 50vh; }
   .story-booking__image { height: 100%; }
-  .story-travel__app-wrapper { max-width: 100%; }
-  .story-validate-overlay { right: -8px; bottom: -12px; }
-  .story-validate-overlay__card { padding: 10px 18px; }
-  .story-discovery__scatter { grid-template-columns: repeat(2, 1fr); gap: calc(var(--spacer) * 2); }
+
+  /* Discovery — keep pins compact on mobile so they don't overlap */
+  .story-discovery__narrative { max-width: 100%; }
+  .story-discovery__pin {
+    width: 88px;
+    margin-left: -30px;   /* 0.346 * 88 */
+    margin-top: -65px;    /* 0.643 * 101 */
+  }
+  .story-discovery__pin-label {
+    top: 72px;            /* tip_y + 7 */
+    left: 30px;           /* tip_x */
+    font-size: 0.58rem;
+    padding: 3px 8px;
+  }
+
   .story-suit__visual { height: 50vh; }
   .story-suit__avatar { height: 100%; }
 
@@ -1522,4 +1694,95 @@
   .fs-closing__title { font-size: clamp(2rem, 8vw, 3.5rem); }
   .fs-endcard { height: auto; min-height: 100vh; padding: calc(var(--spacer) * 6) 0; }
   .fs-endcard__title { font-size: clamp(2rem, 6vw, 3rem); }
+
+  /* Story Timeline */
+  .story-timeline {
+    top: calc(var(--spacer) * 2);
+    left: calc(var(--spacer) * 2);
+    right: calc(var(--spacer) * 2);
+  }
+  .story-timeline__pill { padding: 10px 14px; }
+  .story-timeline__dot { width: 6px; height: 6px; }
+  .story-timeline__label {
+    font-size: 0.55rem;
+    letter-spacing: 0;
+  }
+  .story-timeline__step:not(:last-child)::after {
+    top: 2.5px;
+    left: calc(50% + 6px);
+    right: calc(-50% + 6px);
+  }
+  .story-timeline__tooltip { padding: 8px 12px; }
+  .story-timeline__tooltip-value { font-size: 0.72rem; }
+}
+
+/* =============================================
+   STRUCTURAL CARD (final closing section)
+   ============================================= */
+
+.structural {
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--spacer) * 6) calc(var(--spacer) * 3);
+  color: #ffffff;
+}
+
+.structural__inner {
+  max-width: 960px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacer) * 4);
+  text-align: left;
+}
+
+.structural__title {
+  font-family: var(--sans);
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #ffffff;
+}
+
+.structural__line {
+  font-family: var(--sans);
+  font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 720px;
+}
+
+.structural__line strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.structural__kicker {
+  font-family: var(--sans);
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--purple-light, rgba(255, 255, 255, 0.55));
+  padding-top: calc(var(--spacer) * 2);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  max-width: 480px;
+}
+
+@media (max-width: 768px) {
+  .structural {
+    padding: calc(var(--spacer) * 5) calc(var(--spacer) * 2);
+  }
+  .structural__inner {
+    gap: calc(var(--spacer) * 3);
+  }
 }
