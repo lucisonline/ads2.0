@@ -108,58 +108,62 @@ export function TheSplit() {
     offset: ['start end', 'end start'],
   })
 
-  // Both circles sit at center; x transform spreads / merges them
-  const leftX = useTransform(scrollYProgress, [0.15, 0.45], [-220, -90])
-  const rightX = useTransform(scrollYProgress, [0.15, 0.45], [220, 90])
+  const leftX = useTransform(scrollYProgress, [0.15, 0.45], [-220, -110])
+  const rightX = useTransform(scrollYProgress, [0.15, 0.45], [220, 110])
   const centerOpacity = useTransform(scrollYProgress, [0.36, 0.46], [0, 1])
+  const descOpacity = useTransform(scrollYProgress, [0.28, 0.40], [1, 0])
   const textOpacity = useTransform(scrollYProgress, [0.1, 0.25], [0, 1])
 
   return (
     <section className="split" ref={sectionRef}>
       <div className="split__sticky">
-        <motion.div className="split__title" style={{ opacity: textOpacity }}>
-          <p className="split__num">01</p>
-          <h2 className="split__heading">Two types of companies are emerging.</h2>
-        </motion.div>
+        <motion.h2 className="split__heading" style={{ opacity: textOpacity }}>
+          Two types of companies are emerging.
+        </motion.h2>
 
         <div className="split__venn">
-          {/* Left circle — Experience Providers */}
+          {/* Left circle — Experience Provider */}
           <motion.div
             className="split__circle split__circle--left"
             style={{ x: leftX }}
           >
             <div className="split__circle-ring" />
-            <p className="split__circle-label">Experience<br />Providers</p>
+            <div className="split__circle-content">
+              <p className="split__circle-label">Experience<br />provider</p>
+              <motion.p className="split__circle-desc" style={{ opacity: descOpacity }}>
+                Own the user relationship. Deliver personalized experiences through their own surfaces.
+              </motion.p>
+            </div>
           </motion.div>
 
-          {/* Right circle — Data Providers */}
+          {/* Right circle — Data Provider */}
           <motion.div
             className="split__circle split__circle--right"
             style={{ x: rightX }}
           >
             <div className="split__circle-ring" />
-            <p className="split__circle-label">Data<br />Providers</p>
+            <div className="split__circle-content">
+              <p className="split__circle-label">Data<br />provider</p>
+              <motion.p className="split__circle-desc" style={{ opacity: descOpacity }}>
+                Power the ecosystem. Provide context, preferences, and signals to agents and platforms.
+              </motion.p>
+            </div>
           </motion.div>
 
-          {/* Center label — appears on overlap */}
+          {/* Center label — appears below circles on overlap */}
           <motion.div
             className="split__center-label"
             style={{ opacity: centerOpacity }}
           >
-            <span className="split__center-united">united by</span>
-            <strong className="split__center-hyper">Hyperpersonalisation</strong>
+            <div className="split__arrow">
+              <svg width="24" height="80" viewBox="0 0 24 80" fill="none">
+                <line x1="12" y1="0" x2="12" y2="60" stroke="var(--accent-5)" strokeWidth="2.5" />
+                <polygon points="4,56 12,76 20,56" fill="var(--accent-5)" />
+              </svg>
+            </div>
+            <strong className="split__center-hyper">Converging toward<br />hyper-personalization</strong>
           </motion.div>
         </div>
-
-        {/* Descriptions below the Venn */}
-        <motion.div className="split__descriptions" style={{ opacity: textOpacity }}>
-          <p className="split__desc split__desc--left">
-            Own the user relationship. Deliver personalised experiences through their own surfaces.
-          </p>
-          <p className="split__desc split__desc--right">
-            Power the ecosystem. Provide context, preferences, and signals to agents and platforms.
-          </p>
-        </motion.div>
       </div>
     </section>
   )

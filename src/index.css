@@ -106,7 +106,7 @@ html {
 
 body {
   font-family: var(--sans);
-  overflow-x: hidden;
+  overflow-x: clip;
   background: var(--bg-dark);
   color: var(--text-light);
   line-height: 1.6;
@@ -128,4 +128,15 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--purple-primary);
   border-radius: var(--radius-sm);
+}
+
+/* Noise grain overlay */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  object-fit: cover;
 }
