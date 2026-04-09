@@ -23,14 +23,14 @@ const SLIDES = [
     image: '/Make the Robot Shop.gif',
     imageAlt: 'AI robot with shopping carts',
   },
-  {
-    id: 'modular-ads',
-    layout: 'text-right',
-    text: 'New modular ad formats are needed to serve AI agents as an entirely new customer segment.',
-    image: '/MP4 to GIF Converter.gif',
-    imageAlt: 'Modular ad formats',
-  },
 ]
+
+/* ============================
+   MODULAR ADS — Scroll-reveal text with floating image
+   Separate section after the crossfading pages
+   ============================ */
+
+const MODULAR_WORDS = 'New modular ad formats are needed to serve AI agents as an entirely new customer segment.'.split(' ')
 
 function CenteredSlide({ slide, rawIndex }) {
   // Bottom text fades in after top text + image are visible
@@ -95,7 +95,6 @@ function SplitSlide({ slide }) {
 }
 
 function AgentSlide({ slide, index, rawIndex }) {
-  // Hold fully visible within ±0.4 of index, fade out by ±0.6
   const opacity = useTransform(rawIndex, (v) => {
     const dist = Math.abs(v - index)
     if (dist <= 0.4) return 1
@@ -103,14 +102,12 @@ function AgentSlide({ slide, index, rawIndex }) {
     return 1 - (dist - 0.4) / 0.2
   })
 
-  // Cinematic: outgoing slide drifts up, incoming slides rise from below
   const y = useTransform(rawIndex, (v) => {
     const delta = v - index
     if (Math.abs(delta) > 1) return delta > 0 ? -80 : 80
     return delta * -80
   })
 
-  // Subtle scale punch: 0.96 → 1.0 as slide enters
   const scale = useTransform(rawIndex, (v) => {
     const dist = Math.abs(v - index)
     if (dist >= 1) return 0.96
@@ -130,6 +127,59 @@ function AgentSlide({ slide, index, rawIndex }) {
   )
 }
 
+/* Word-level scroll reveal for a single word */
+function RevealWord({ word, index, total, scrollYProgress }) {
+  // Each word lights up within its scroll window
+  const start = (index / total) * 0.7 + 0.1
+  const end = start + 0.7 / total
+
+  const color = useTransform(
+    scrollYProgress,
+    [start, end],
+    ['rgba(0,0,0,0.15)', 'rgba(0,0,0,1)']
+  )
+
+  return (
+    <motion.span className="ap-reveal-word" style={{ color }}>
+      {word}
+    </motion.span>
+  )
+}
+
+function ModularAdsSection() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end end'],
+  })
+
+  // Image floats gently
+  const imgY = useTransform(scrollYProgress, [0, 1], [40, -60])
+  const imgOpacity = useTransform(scrollYProgress, [0, 0.1, 0.85, 1], [0, 1, 1, 0])
+
+  return (
+    <section className="ap-modular" ref={ref}>
+      <div className="ap-modular__sticky">
+        <motion.div className="ap-modular__image" style={{ y: imgY, opacity: imgOpacity }}>
+          <img src="/MP4 to GIF Converter.gif" alt="Modular ad formats" />
+        </motion.div>
+
+        <div className="ap-modular__text">
+          {MODULAR_WORDS.map((word, i) => (
+            <RevealWord
+              key={i}
+              word={word}
+              index={i}
+              total={MODULAR_WORDS.length}
+              scrollYProgress={scrollYProgress}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function AgentPages() {
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -141,16 +191,19 @@ export default function AgentPages() {
   const rawIndex = useTransform(scrollYProgress, [0, 1], [0, total - 1])
 
   return (
-    <section
-      ref={containerRef}
-      className="ap"
-      style={{ height: `${total * 200}vh` }}
-    >
-      <div className="ap__pin">
-        {SLIDES.map((slide, i) => (
-          <AgentSlide key={slide.id} slide={slide} index={i} rawIndex={rawIndex} />
-        ))}
-      </div>
-    </section>
+    <>
+      <section
+        ref={containerRef}
+        className="ap"
+        style={{ height: `${total * 200}vh` }}
+      >
+        <div className="ap__pin">
+          {SLIDES.map((slide, i) => (
+            <AgentSlide key={slide.id} slide={slide} index={i} rawIndex={rawIndex} />
+          ))}
+        </div>
+      </section>
+      <ModularAdsSection />
+    </>
   )
 }

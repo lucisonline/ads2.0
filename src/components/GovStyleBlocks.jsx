@@ -44,10 +44,10 @@ function RevealPara({ text, start, end, progress, className, inlineIcon }) {
 
 /* ============================
    BLOCK 1 — Full statement
-   "AI is a threat to advertising as we know it."
+   "AI is redefining advertising as we know it."
    ============================ */
 
-const BLOCK1_TEXT = ['AI is a threat to advertising as we know it.']
+const BLOCK1_TEXT = ['AI is redefining advertising as we know it.']
 
 export function GovBlock1() {
   const ref = useRef(null)

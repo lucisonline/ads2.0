@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
 /*
@@ -63,15 +63,35 @@ function AnimatedCursor({ cursor, progress, index }) {
 
 export default function EndPage() {
   const ref = useRef(null)
+
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth <= 768
+  )
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 768px)')
+    const handler = (e) => setIsMobile(e.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end end'],
   })
 
   // Hand: barely peeks in phase 1, slides fully into view by phase 3
-  const handLeft = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], ['95%', '65%', '40%', '29%'])
-  const handRight = useTransform(scrollYProgress, [0, 0.66, 1], ['-2%', '-15%', '-21%'])
-  const handTop = useTransform(scrollYProgress, [0, 0.66, 1], ['-5%', '-12%', '-19%'])
+  const handLeft = useTransform(
+    scrollYProgress, [0, 0.33, 0.66, 1],
+    isMobile ? ['110%', '50%', '35%', '25%'] : ['95%', '65%', '40%', '29%']
+  )
+  const handRight = useTransform(
+    scrollYProgress, [0, 0.66, 1],
+    isMobile ? ['auto', 'auto', 'auto'] : ['-2%', '-15%', '-21%']
+  )
+  const handTop = useTransform(
+    scrollYProgress, [0, 0.66, 1],
+    isMobile ? ['-15%', '15%', '25%'] : ['-5%', '-12%', '-19%']
+  )
 
   // "Design strategy presents" — drops down from top, centered horizontally
   const t1Opacity = useTransform(scrollYProgress, [0.02, 0.10], [0, 1])
@@ -79,14 +99,15 @@ export default function EndPage() {
 
   // "Advertising in the age of agents" — floats up from below as user starts scrolling
   const t2Opacity = useTransform(scrollYProgress, [0.02, 0.12], [0, 1])
-  const t2Bottom = useTransform(scrollYProgress, [0.02, 0.35], ['-8%', '16%'])
+  const t2Bottom = useTransform(scrollYProgress, [0.02, 0.35], isMobile ? ['-8%', '22%'] : ['-8%', '16%'])
 
   return (
     <section className="endpage" ref={ref}>
       <div className="endpage__sticky">
-        {CURSORS.map((cursor, i) => (
-          <AnimatedCursor key={i} cursor={cursor} progress={scrollYProgress} index={i} />
-        ))}
+        {CURSORS.map((cursor, i) => {
+          if (isMobile && [1, 3, 5, 8].includes(i)) return null
+          return <AnimatedCursor key={i} cursor={cursor} progress={scrollYProgress} index={i} />
+        })}
 
         <motion.div
           className="endpage__hand"

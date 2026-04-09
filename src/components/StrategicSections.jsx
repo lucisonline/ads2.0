@@ -161,7 +161,7 @@ export function TheSplit() {
                 <polygon points="4,56 12,76 20,56" fill="var(--accent-5)" />
               </svg>
             </div>
-            <strong className="split__center-hyper">Tied together by<br />hyperpersonalization</strong>
+            <strong className="split__center-hyper">Converging toward<br />hyper-personalization</strong>
           </motion.div>
         </div>
       </div>
