@@ -17,7 +17,7 @@ export function TitleScreen() {
   const y = useTransform(scrollYProgress, [0, 0.7], [0, -80])
 
   return (
-    <section ref={ref} className="hero">
+    <section ref={ref} className="hero" data-lenis-snap>
       <motion.div className="hero__content" style={{ opacity, y }}>
         <p className="hero__eyebrow">Design Strategy / Research</p>
         <h1 className="hero__title">Ads&nbsp;2.0</h1>
@@ -169,7 +169,7 @@ export function ProtocolAgnostic() {
   const [ref, inView] = useReveal()
 
   return (
-    <section className="protocol" ref={ref}>
+    <section className="protocol" ref={ref} data-lenis-snap>
       <motion.div
         className="protocol__inner"
         initial={{ opacity: 0 }}
@@ -196,7 +196,7 @@ export function CriteoPosition() {
   const [ref, inView] = useReveal()
 
   return (
-    <section className="criteo" ref={ref}>
+    <section className="criteo" ref={ref} data-lenis-snap>
       <motion.div
         className="criteo__inner"
         initial={{ opacity: 0, y: 20 }}
@@ -217,7 +217,7 @@ export function Transition() {
   const [ref, inView] = useReveal()
 
   return (
-    <section className="trans" ref={ref}>
+    <section className="trans" ref={ref} data-lenis-snap>
       <motion.div
         className="trans__inner"
         initial={{ opacity: 0 }}
@@ -225,9 +225,9 @@ export function Transition() {
         transition={{ duration: 1 }}
       >
         <h2 className="trans__title">
-          Let's jump into<br />the&nbsp;future.
+          You are Lola.<br />It's Saturday&nbsp;morning.
         </h2>
-        <p className="trans__sub">Meet Lola. It's&nbsp;2030.</p>
+        <p className="trans__sub">08:42 — your weekend just started</p>
       </motion.div>
     </section>
   )
